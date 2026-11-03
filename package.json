@@ -6,8 +6,8 @@
   "author": "Kartik Pagariya",
   "license": "MIT",
   "scripts": {
-    "start": "electron .",
-    "dev": "electron . --dev"
+    "start": "node node_modules/electron/cli.js .",
+    "dev": "node node_modules/electron/cli.js . --dev"
   },
   "devDependencies": {
     "electron": "^33.0.0",
