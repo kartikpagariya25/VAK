@@ -13,7 +13,7 @@ public static class WidgetCatalog
             () => Placeholder("Home"), () => new Pages.HomePage(host), "Your widgets at a glance"),
         new WidgetModule(
             new WidgetInfo("system", "System", "Power · Network · Audio", "system", new[] { "battery", "cpu", "ram", "network", "volume", "performance" }, true),
-            () => Placeholder("System card"), () => Placeholder("System"), "Live performance at a glance"),
+            () => new Cards.SystemCard(host), () => new Pages.SystemPage(host), "Live performance at a glance"),
         new WidgetModule(
             new WidgetInfo("clock", "Clock", "Local Time & Date", "clock", new[] { "time", "date", "world", "zones" }, true),
             () => Placeholder("Clock card"), () => Placeholder("Clock"), "Local time and world clocks"),

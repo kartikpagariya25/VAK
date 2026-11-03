@@ -14,7 +14,8 @@ public class WindowsBatteryService : IBatteryService
                 return null;
             var percent = Math.Clamp((int)Math.Round(left * 100.0 / full), 0, 100);
             var charging = r.Status is Windows.System.Power.BatteryStatus.Charging;
-            return new BatteryInfo(percent, charging, BatteryMath.HealthPercent(full, r.DesignCapacityInMilliwattHours));
+            var plugged = r.Status is Windows.System.Power.BatteryStatus.Charging or Windows.System.Power.BatteryStatus.Idle;
+            return new BatteryInfo(percent, charging, BatteryMath.HealthPercent(full, r.DesignCapacityInMilliwattHours), plugged);
         }
         catch { return null; }
     }

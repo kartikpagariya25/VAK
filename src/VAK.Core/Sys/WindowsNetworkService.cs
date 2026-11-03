@@ -15,8 +15,7 @@ public class WindowsNetworkService : INetworkService
         try
         {
             var nic = NetworkInterface.GetAllNetworkInterfaces()
-                .Where(n => n.OperationalStatus == OperationalStatus.Up &&
-                            n.NetworkInterfaceType is NetworkInterfaceType.Wireless80211 or NetworkInterfaceType.Ethernet)
+                .Where(IsRealConnection)
                 .OrderByDescending(n => n.Speed)
                 .FirstOrDefault();
             if (nic is null) return null;
@@ -32,11 +31,26 @@ public class WindowsNetworkService : INetworkService
             }
             _lastDown = stats.BytesReceived; _lastUp = stats.BytesSent; _lastAt = now;
 
-            var name = nic.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 ? Ssid() : nic.Name;
+            var wireless = nic.NetworkInterfaceType == NetworkInterfaceType.Wireless80211;
+            var name = wireless ? Ssid() : nic.Name;
             int? mbps = nic.Speed > 0 ? (int)(nic.Speed / 1_000_000) : null;
-            return new NetworkInfo(string.IsNullOrEmpty(name) ? nic.Name : name, mbps, down, up);
+            return new NetworkInfo(string.IsNullOrEmpty(name) ? nic.Name : name, mbps, down, up, wireless);
         }
         catch { return null; }
+    }
+
+    private static readonly string[] VirtualHints =
+        { "loopback", "npcap", "virtual", "vmware", "vbox", "hyper-v", "vethernet", "bluetooth", "tap-", "wintun", "wireguard" };
+
+    /// <summary>A connected Wi-Fi or Ethernet adapter that has a default gateway and is not a virtual or loopback adapter.</summary>
+    private static bool IsRealConnection(NetworkInterface n)
+    {
+        if (n.OperationalStatus != OperationalStatus.Up) return false;
+        if (n.NetworkInterfaceType is not (NetworkInterfaceType.Wireless80211 or NetworkInterfaceType.Ethernet)) return false;
+        if (VirtualHints.Any(h => n.Name.Contains(h, StringComparison.OrdinalIgnoreCase) ||
+                                  n.Description.Contains(h, StringComparison.OrdinalIgnoreCase))) return false;
+        return n.GetIPProperties().GatewayAddresses.Any(g =>
+            g.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork && !g.Address.Equals(System.Net.IPAddress.Any));
     }
 
     // netsh is slow, so the SSID is refreshed at most every 15 seconds.

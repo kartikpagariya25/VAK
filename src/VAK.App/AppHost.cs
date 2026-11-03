@@ -2,6 +2,7 @@ using VAK.Core.Settings;
 using VAK.Core.Sys;
 using VAK.Core.Widgets;
 using VAK.App.Shell;
+using VAK.App.Services;
 using VAK.App.Widgets;
 
 namespace VAK.App;
@@ -21,8 +22,11 @@ public sealed class AppHost
     public IPerformanceService Performance { get; } = new WindowsPerformanceService();
     public IVolumeService Volume { get; } = new WindowsVolumeService();
 
+    public SystemMonitor Monitor { get; }
+
     public AppHost(string settingsPath)
     {
+        Monitor = new SystemMonitor(this);
         _store = new SettingsStore(settingsPath);
         Settings = _store.Load();
         foreach (var module in WidgetCatalog.Build(this))
