@@ -84,6 +84,12 @@ public sealed class DropPage : UserControl
             try { Process.Start(new ProcessStartInfo("ms-settings:network-wifi") { UseShellExecute = true }); }
             catch (System.ComponentModel.Win32Exception) { }
         }));
+        if (_host.Drop.Running)
+        {
+            var stopNow = Pill("Stop Drop", (Brush)FindResource("Brush.Control"), async () => { await _host.Drop.StopAsync(); Render(); });
+            stopNow.Margin = new Thickness(10, 0, 0, 0);
+            actions.Children.Add(stopNow);
+        }
         var hint = T("● Checking again automatically", "Style.TextDim", 12);
         hint.Margin = new Thickness(14, 0, 0, 0); hint.VerticalAlignment = VerticalAlignment.Center;
         actions.Children.Add(hint);

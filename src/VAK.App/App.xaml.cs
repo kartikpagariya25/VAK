@@ -16,6 +16,7 @@ public partial class App : Application
     private ClipboardMonitor? _clipboard;
     private ScreenTimeTracker? _screenTime;
     private AppHost? _host;
+    private System.Windows.Threading.DispatcherTimer? _dropGuard;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -55,6 +56,23 @@ public partial class App : Application
             _tray.ShowNotice("VAK", message);
         };
 
+        // Drop is only allowed while the network is private. This watches for the network changing (a laptop moving to a cafe),
+        // switches Drop off when it does, tells the user, and shows in the tray tooltip whenever Drop is on.
+        host.Drop.Changed += () => Dispatcher.Invoke(() => _tray.SetTooltip(host.Drop.Running ? "VAK - Drop is on" : "VAK"));
+        host.Drop.AutoStopped += () => Dispatcher.Invoke(() => _tray.ShowNotice("VAK Drop", "Drop switched itself off after sitting idle."));
+        _dropGuard = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
+        _dropGuard.Tick += async (_, _) =>
+        {
+            if (host.Drop.Running is false || host.Drop.Url is not { } bound) return;
+            var (state, address) = await Task.Run(NetworkCategory.Check);
+            if (host.Drop.Running && (state != NetworkState.Private || address?.ToString() != new Uri(bound).Host))
+            {
+                await host.Drop.StopAsync();
+                _tray.ShowNotice("VAK Drop", "Drop was switched off because the network changed.");
+            }
+        };
+        _dropGuard.Start();
+
         _hotkey = new HotkeyService(_shell);
         _hotkey.Pressed += () => _shell.Toggle();
         host.TryApplyHotkey = hk => _hotkey.Register(hk);
@@ -78,6 +96,7 @@ public partial class App : Application
         _hotkey?.Dispose();
         _clipboard?.Dispose();
         _screenTime?.Flush();
+        _dropGuard?.Stop();
         _host?.Drop.StopAsync().Wait(TimeSpan.FromSeconds(2));
         _tray?.Dispose();
         _singleInstance?.Dispose();

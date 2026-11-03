@@ -136,4 +136,32 @@ public class NotesAndLinksTests : IDisposable
         repo.Remove(a.Id);
         Assert.Empty(repo.All);
     }
+
+    [Fact]
+    public void ListStore_CorruptFile_IsKeptAsCorruptCopy_NotOverwrittenSilently()
+    {
+        File.WriteAllText(P("c.json"), "{broken");
+        var s = new JsonListStore<Item>(P("c.json"));
+        Assert.Empty(s.Load());
+        s.Save(new[] { new Item("new", 1) });
+        Assert.Single(Directory.GetFiles(_dir, "c.json.corrupt-*"));
+        Assert.Equal("{broken", File.ReadAllText(Directory.GetFiles(_dir, "c.json.corrupt-*")[0]));
+    }
+
+    [Fact]
+    public void ListStore_FileLockedAtLoad_IsNotOverwrittenBySave()
+    {
+        var path = P("locked.json");
+        new JsonListStore<Item>(path).Save(new[] { new Item("precious", 1) });
+        List<Item> loaded;
+        JsonListStore<Item> store;
+        using (new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None)) // another process holds the file
+        {
+            store = new JsonListStore<Item>(path);
+            loaded = store.Load();
+        }
+        Assert.Empty(loaded);
+        store.Save(new[] { new Item("replacement", 2) }); // must be refused: the real data was never read
+        Assert.Contains("precious", File.ReadAllText(path));
+    }
 }

@@ -26,6 +26,9 @@ public static class ClipboardText
 /// <summary>Everything copied recently: text, links and images. Pinned items stay on top and are never dropped by the size cap.</summary>
 public class ClipboardHistory
 {
+    /// <summary>Longer text (a copied log file, say) is not recorded: it would bloat the history file and slow every later save.</summary>
+    public const int MaxTextLength = 256 * 1024;
+
     private readonly JsonListStore<ClipEntry> _store;
     private readonly Func<DateTime> _now;
     private readonly int _max;
@@ -48,7 +51,7 @@ public class ClipboardHistory
     /// <summary>Adds copied text. Blank text is ignored; the same text again just moves to the top.</summary>
     public ClipEntry? AddText(string text)
     {
-        if (string.IsNullOrWhiteSpace(text)) return null;
+        if (string.IsNullOrWhiteSpace(text) || text.Length > MaxTextLength) return null;
         var existing = _items.FirstOrDefault(e => e.Kind != ClipKind.Image && e.Text == text);
         if (existing is not null)
         {

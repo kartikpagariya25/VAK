@@ -122,4 +122,28 @@ public class AiUsageTests
     [InlineData(3200000, "3.2M")]
     [InlineData(1000000000, "1B")]
     public void FormatTokens_Abbreviates(long tokens, string expected) => Assert.Equal(expected, AiUsageSummary.FormatTokens(tokens));
+
+    private static string Prompt(string uuid, string extra = "") =>
+        "{\"type\":\"user\",\"uuid\":\"" + uuid + "\"," + extra + "\"timestamp\":\"2026-11-03T08:30:00.000Z\",\"sessionId\":\"s1\",\"message\":{\"role\":\"user\",\"content\":\"hello\"}}";
+
+    [Fact]
+    public void RepeatedPrompt_SameUuid_IsCountedOnce()
+    {
+        var p = new ClaudeLogParser();
+        Assert.NotNull(p.ParseLine(Prompt("u1")));
+        Assert.Null(p.ParseLine(Prompt("u1")));
+        Assert.NotNull(p.ParseLine(Prompt("u2")));
+    }
+
+    [Theory]
+    [InlineData("\"isMeta\":true,")]
+    [InlineData("\"isCompactSummary\":true,")]
+    public void MetaPrompts_AreNotMessages(string extra) => Assert.Null(new ClaudeLogParser().ParseLine(Prompt("u9", extra)));
+
+    [Fact]
+    public void Events_CarryAnIdForCrossFileDedupe()
+    {
+        Assert.Equal("m1", new ClaudeLogParser().ParseLine(Assistant)!.Id);
+        Assert.Equal("u1", new ClaudeLogParser().ParseLine(Prompt("u1"))!.Id);
+    }
 }

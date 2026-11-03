@@ -101,4 +101,12 @@ public class ClipboardHistoryTests : IDisposable
     [InlineData("", 0)]
     [InlineData("single", 1)]
     public void WordCount(string text, int words) => Assert.Equal(words, ClipboardText.WordCount(text));
+
+    [Fact]
+    public void AddText_VeryLargeText_IsSkipped()
+    {
+        var h = New();
+        Assert.Null(h.AddText(new string('x', ClipboardHistory.MaxTextLength + 1)));
+        Assert.NotNull(h.AddText(new string('x', ClipboardHistory.MaxTextLength)));
+    }
 }

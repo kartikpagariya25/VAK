@@ -6,7 +6,7 @@ namespace VAK.Core.AiUsage;
 public enum AiAgent { Claude, Codex }
 
 public record UsageEvent(DateTime Time, AiAgent Agent, string SessionId, string Project, string Model,
-    long Input, long Output, long CacheWrite, long CacheRead, int Messages, int ToolCalls)
+    long Input, long Output, long CacheWrite, long CacheRead, int Messages, int ToolCalls, string Id = "")
 {
     public long TotalTokens => Input + Output + CacheWrite + CacheRead;
     public double Cost => ModelPricing.Cost(Model, Input, Output, CacheWrite, CacheRead);
@@ -37,6 +37,7 @@ public class ClaudeLogParser
 {
     private readonly HashSet<string> _seenMessages = new();
     private readonly HashSet<string> _seenTools = new();
+    private readonly HashSet<string> _seenPrompts = new();
 
     public UsageEvent? ParseLine(string line)
     {
@@ -55,7 +56,12 @@ public class ClaudeLogParser
             var project = ProjectName(Str(root, "cwd"));
 
             if (type == "user")
-                return IsPrompt(message) ? new UsageEvent(time, AiAgent.Claude, session, project, "", 0, 0, 0, 0, 1, 0) : null;
+            {
+                if (Flag(root, "isMeta") || Flag(root, "isCompactSummary") || !IsPrompt(message)) return null; // injected lines are not prompts
+                var uuid = Str(root, "uuid");
+                if (uuid.Length > 0 && !_seenPrompts.Add(uuid)) return null; // a resumed session repeats its history
+                return new UsageEvent(time, AiAgent.Claude, session, project, "", 0, 0, 0, 0, 1, 0, uuid);
+            }
 
             var id = Str(message, "id");
             var firstSight = id.Length == 0 || _seenMessages.Add(id);
@@ -72,10 +78,12 @@ public class ClaudeLogParser
                 write = Num(usage, "cache_creation_input_tokens"); read = Num(usage, "cache_read_input_tokens");
             }
             if (input + output + write + read == 0 && tools == 0) return null;
-            return new UsageEvent(time, AiAgent.Claude, session, project, Str(message, "model"), input, output, write, read, 0, tools);
+            return new UsageEvent(time, AiAgent.Claude, session, project, Str(message, "model"), input, output, write, read, 0, tools, firstSight ? id : "");
         }
         catch (JsonException) { return null; }
     }
+
+    private static bool Flag(JsonElement e, string name) => e.TryGetProperty(name, out var v) && v.ValueKind == JsonValueKind.True;
 
     private static bool IsPrompt(JsonElement message)
     {

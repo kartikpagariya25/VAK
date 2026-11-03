@@ -148,4 +148,45 @@ public class DropServerTests : IAsyncLifetime
         Assert.False(await s.StartAsync(IPAddress.Loopback));
         Assert.False(s.Running);
     }
+
+    [Fact]
+    public async Task ReceivedFiles_AreMarkedAsFromTheInternet()
+    {
+        await _http.PostAsync($"{_base}/upload?t={_token}", Upload("invoice.pdf.exe", "MZ"));
+        var zone = File.ReadAllText(Path.Combine(_dir, "received", "invoice.pdf.exe") + ":Zone.Identifier");
+        Assert.Contains("ZoneId=3", zone);
+    }
+
+    [Fact]
+    public async Task IdleServer_StopsItself()
+    {
+        await using var s = new DropServer(Path.Combine(_dir, "idle"), ip => IPAddress.IsLoopback(ip)) { IdleTimeout = TimeSpan.FromMilliseconds(400) };
+        var autoStopped = new TaskCompletionSource();
+        s.AutoStopped += () => autoStopped.TrySetResult();
+        Assert.True(await s.StartAsync(IPAddress.Loopback));
+        await Task.WhenAny(autoStopped.Task, Task.Delay(5000));
+        Assert.True(autoStopped.Task.IsCompleted);
+        Assert.False(s.Running);
+    }
+
+    [Fact]
+    public async Task ActiveServer_DoesNotIdleOut()
+    {
+        await using var s = new DropServer(Path.Combine(_dir, "busy"), ip => IPAddress.IsLoopback(ip)) { IdleTimeout = TimeSpan.FromMilliseconds(1500) };
+        Assert.True(await s.StartAsync(IPAddress.Loopback));
+        var uri = new Uri(s.Url!);
+        for (var i = 0; i < 5; i++) { await _http.GetAsync($"http://127.0.0.1:{uri.Port}/?t={System.Web.HttpUtility.ParseQueryString(uri.Query)["t"]}"); await Task.Delay(500); }
+        Assert.True(s.Running);
+    }
+
+    [Fact]
+    public async Task UploadWhileTheUiReadsTheLists_DoesNotBlockThem()
+    {
+        var big = new string('x', 8 * 1024 * 1024);
+        var upload = _http.PostAsync($"{_base}/upload?t={_token}", Upload("big.bin", big));
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        for (var i = 0; i < 50; i++) { _ = _server.Shared; _ = _server.Received; }
+        Assert.True(sw.ElapsedMilliseconds < 500, "reading the lists must not wait for the copy");
+        await upload;
+    }
 }

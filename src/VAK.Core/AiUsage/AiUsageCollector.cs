@@ -3,15 +3,15 @@ using System.Text;
 namespace VAK.Core.AiUsage;
 
 /// <summary>Scans local Claude Code and Codex logs (read-only) and returns usage events for the last few weeks.
-/// Files are opened with sharing so a running session can keep writing, and a message that appears in two files
-/// (a resumed session repeats its history) is counted once.</summary>
+/// Each log file is parsed once and cached by (path, length, modified time), so a running session only re-reads the file it is
+/// writing, not every log. Files are opened with sharing so a session can keep writing, and a message or prompt that appears in
+/// two files (a resumed session repeats its history) is counted once.</summary>
 public class AiUsageCollector
 {
     private readonly string _claudeDir;
     private readonly string _codexDir;
     private readonly Func<DateTime> _now;
-    private string _signature = "";
-    private IReadOnlyList<UsageEvent> _cached = Array.Empty<UsageEvent>();
+    private readonly Dictionary<string, (long Length, long Ticks, List<UsageEvent> Events)> _cache = new();
 
     public AiUsageCollector(string claudeProjectsDir, string codexSessionsDir, Func<DateTime> now)
     {
@@ -26,25 +26,41 @@ public class AiUsageCollector
         return new AiUsageCollector(claude, Path.Combine(home, ".codex", "sessions"), now);
     }
 
-    /// <summary>Events from files changed in the last <paramref name="days"/> days. Unchanged logs return the previous result.</summary>
+    /// <summary>Events from files changed in the last <paramref name="days"/> days.</summary>
     public IReadOnlyList<UsageEvent> Collect(int days = 35)
     {
         var cutoff = _now().AddDays(-days);
         var claudeFiles = Files(_claudeDir, cutoff);
         var codexFiles = Files(_codexDir, cutoff);
-        var signature = string.Join("|", claudeFiles.Concat(codexFiles).Select(f => $"{f.FullName}:{f.Length}:{f.LastWriteTimeUtc.Ticks}"));
-        if (signature == _signature) return _cached;
+
+        var live = new HashSet<string>(claudeFiles.Concat(codexFiles).Select(f => f.FullName));
+        foreach (var gone in _cache.Keys.Where(k => !live.Contains(k)).ToList()) _cache.Remove(gone);
 
         var events = new List<UsageEvent>();
-        var parser = new ClaudeLogParser(); // shared, so a repeated message id is ignored across files
+        var seen = new HashSet<string>();
         foreach (var f in claudeFiles.OrderBy(f => f.LastWriteTimeUtc))
-            foreach (var line in Lines(f))
-                if (parser.ParseLine(line) is { } e && e.Time >= cutoff) events.Add(e);
+            foreach (var e in Cached(f, () => ParseClaude(f)))
+                if (e.Time >= cutoff && (e.Id.Length == 0 || seen.Add(e.Id))) events.Add(e);
         foreach (var f in codexFiles)
-            events.AddRange(CodexLogParser.ParseFile(Lines(f), Path.GetFileNameWithoutExtension(f.Name)).Where(e => e.Time >= cutoff));
+            events.AddRange(Cached(f, () => CodexLogParser.ParseFile(Lines(f), Path.GetFileNameWithoutExtension(f.Name)).ToList()).Where(e => e.Time >= cutoff));
+        return events;
+    }
 
-        _signature = signature;
-        return _cached = events;
+    private List<UsageEvent> Cached(FileInfo file, Func<List<UsageEvent>> parse)
+    {
+        if (_cache.TryGetValue(file.FullName, out var hit) && hit.Length == file.Length && hit.Ticks == file.LastWriteTimeUtc.Ticks) return hit.Events;
+        var events = parse();
+        _cache[file.FullName] = (file.Length, file.LastWriteTimeUtc.Ticks, events);
+        return events;
+    }
+
+    private static List<UsageEvent> ParseClaude(FileInfo file)
+    {
+        var parser = new ClaudeLogParser(); // one per file: repeats inside a file are dropped here, repeats across files in Collect
+        var events = new List<UsageEvent>();
+        foreach (var line in Lines(file))
+            if (parser.ParseLine(line) is { } e) events.Add(e);
+        return events;
     }
 
     private static List<FileInfo> Files(string dir, DateTime cutoff)

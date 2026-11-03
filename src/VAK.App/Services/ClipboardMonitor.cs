@@ -51,7 +51,7 @@ public sealed class ClipboardMonitor : IDisposable
         {
             try
             {
-                if (Clipboard.ContainsData("ExcludeClipboardContentFromMonitorProcessing")) return;
+                if (IsPrivate()) return;
                 if (Clipboard.ContainsText())
                 {
                     if (_history.AddText(Clipboard.GetText()) is not null) Captured?.Invoke();
@@ -61,6 +61,24 @@ public sealed class ClipboardMonitor : IDisposable
             }
             catch (Exception e) when (e is COMException or ExternalException) { Thread.Sleep(30); } // another app holds the clipboard
         }
+    }
+
+    /// <summary>True when the copying app asked not to be recorded: the monitor-exclusion marker, the old "Clipboard Viewer Ignore"
+    /// marker, or a Windows clipboard-history/cloud flag set to 0 (password managers use these).</summary>
+    private static bool IsPrivate()
+    {
+        if (Clipboard.ContainsData("ExcludeClipboardContentFromMonitorProcessing")) return true;
+        if (Clipboard.ContainsData("Clipboard Viewer Ignore")) return true;
+        return FlagIsZero("CanIncludeInClipboardHistory") || FlagIsZero("CanUploadToCloudClipboard");
+    }
+
+    private static bool FlagIsZero(string format)
+    {
+        if (!Clipboard.ContainsData(format)) return false;
+        if (Clipboard.GetData(format) is not MemoryStream stream || stream.Length < 4) return false;
+        var bytes = new byte[4];
+        stream.Position = 0;
+        return stream.Read(bytes, 0, 4) == 4 && BitConverter.ToInt32(bytes, 0) == 0;
     }
 
     private void SaveImage(BitmapSource image)

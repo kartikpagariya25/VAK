@@ -19,7 +19,7 @@ public sealed class ScreenTimeTracker
 
     private readonly ScreenTimeLog _log;
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(1) };
-    private readonly Dictionary<int, (string Key, string Name)> _byPid = new();
+    private readonly Dictionary<int, (string Key, string Name, DateTime Started)> _byPid = new();
     private readonly Dictionary<string, string> _pathByKey = new();
     private readonly Dictionary<string, ImageSource?> _icons = new();
     private readonly int _ownPid = Environment.ProcessId;
@@ -58,7 +58,13 @@ public sealed class ScreenTimeTracker
         if (hwnd == IntPtr.Zero) return null;
         GetWindowThreadProcessId(hwnd, out var pid);
         if (pid == 0 || pid == _ownPid) return null;
-        if (_byPid.TryGetValue((int)pid, out var known)) return known;
+        if (_byPid.TryGetValue((int)pid, out var known))
+        {
+            // Windows reuses process ids: trust the cache only while the process is the same one (same start time)
+            if (StartTimeOf((int)pid) == known.Started) return (known.Key, known.Name);
+            _byPid.Remove((int)pid);
+        }
+        if (_byPid.Count > 256) _byPid.Clear();
 
         try
         {
@@ -74,9 +80,16 @@ public sealed class ScreenTimeTracker
             if (key == "explorer") name = "File Explorer";
             var result = (key, string.IsNullOrWhiteSpace(name) ? p.ProcessName : name.Trim());
             if (path is not null) _pathByKey[key] = path;
-            return _byPid[(int)pid] = result;
+            _byPid[(int)pid] = (result.key, result.Item2, StartTimeOf((int)pid));
+            return result;
         }
         catch (Exception e) when (e is ArgumentException or InvalidOperationException) { return null; } // process already gone
+    }
+
+    private static DateTime StartTimeOf(int pid)
+    {
+        try { using var p = Process.GetProcessById(pid); return p.StartTime; }
+        catch (Exception e) when (e is ArgumentException or InvalidOperationException or Win32Exception) { return DateTime.MinValue; }
     }
 
     /// <summary>The app's own icon, or null when it cannot be read.</summary>

@@ -32,6 +32,15 @@ public sealed class DropServer : IAsyncDisposable
 
     public event Action? Changed;
 
+    /// <summary>Raised when the server stopped itself because nobody used it for <see cref="IdleTimeout"/>.</summary>
+    public event Action? AutoStopped;
+
+    /// <summary>How long the server may sit unused before it switches itself off.</summary>
+    public TimeSpan IdleTimeout { get; set; } = TimeSpan.FromMinutes(20);
+
+    private DateTime _lastActivity = DateTime.UtcNow;
+    private Timer? _idleTimer;
+
     private readonly Func<IPAddress, bool> _isAllowed;
 
     /// <param name="isAllowed">Which addresses the server may listen on. The default is private LAN addresses only;
@@ -85,10 +94,13 @@ public sealed class DropServer : IAsyncDisposable
                 builder.Services.Configure<FormOptions>(o => o.MultipartBodyLengthLimit = MaxUploadBytes);
                 var app = builder.Build();
                 MapRoutes(app);
-                await app.StartAsync().ConfigureAwait(true);
+                await app.StartAsync().ConfigureAwait(false);
                 _app = app;
                 Url = $"http://{address}:{port}/?t={_token}";
                 Running = true;
+                _lastActivity = DateTime.UtcNow;
+                var every = TimeSpan.FromMilliseconds(Math.Clamp(IdleTimeout.TotalMilliseconds / 4, 50, 5000));
+                _idleTimer = new Timer(_ => CheckIdle(), null, every, every);
                 Changed?.Invoke();
                 return true;
             }
@@ -97,13 +109,20 @@ public sealed class DropServer : IAsyncDisposable
         return false;
     }
 
+    private void CheckIdle()
+    {
+        if (!Running || DateTime.UtcNow - _lastActivity < IdleTimeout) return;
+        _ = Task.Run(async () => { await StopAsync().ConfigureAwait(false); AutoStopped?.Invoke(); });
+    }
+
     public async Task StopAsync()
     {
+        _idleTimer?.Dispose(); _idleTimer = null;
         var app = _app;
         _app = null; Running = false; Url = null;
         if (app is not null)
         {
-            try { await app.StopAsync().ConfigureAwait(true); await app.DisposeAsync().ConfigureAwait(true); }
+            try { await app.StopAsync().ConfigureAwait(false); await app.DisposeAsync().ConfigureAwait(false); }
             catch (Exception e) when (e is OperationCanceledException or ObjectDisposedException) { }
         }
         Changed?.Invoke();
@@ -113,6 +132,7 @@ public sealed class DropServer : IAsyncDisposable
     {
         app.Use(async (ctx, next) =>
         {
+            _lastActivity = DateTime.UtcNow;
             ctx.Response.Headers["X-Content-Type-Options"] = "nosniff";
             ctx.Response.Headers["Cache-Control"] = "no-store";
             if (!DropToken.Matches(_token, ctx.Request.Query["t"]))
@@ -147,20 +167,37 @@ public sealed class DropServer : IAsyncDisposable
             foreach (var file in form.Files)
             {
                 var name = UploadNames.Safe(file.FileName);
-                string path;
-                lock (_gate)
+                string path, unique;
+                FileStream stream;
+                lock (_gate) // only the name reservation is under the lock, so the UI never waits for a long copy
                 {
-                    var unique = ShelfStore.UniqueName(Directory.GetFiles(ReceivedDir).Select(Path.GetFileName).OfType<string>(), name);
+                    unique = ShelfStore.UniqueName(Directory.GetFiles(ReceivedDir).Select(Path.GetFileName).OfType<string>(), name);
                     path = Path.Combine(ReceivedDir, unique);
-                    using var stream = new FileStream(path, FileMode.CreateNew, FileAccess.Write);
-                    file.CopyTo(stream);
-                    _received.Add(new ReceivedFile(unique, path, file.Length, DateTime.Now));
+                    stream = new FileStream(path, FileMode.CreateNew, FileAccess.Write);
                 }
-                saved++;
+                try
+                {
+                    await using (stream) await file.CopyToAsync(stream).ConfigureAwait(false);
+                    MarkFromInternet(path);
+                    lock (_gate) _received.Add(new ReceivedFile(unique, path, file.Length, DateTime.Now));
+                    saved++;
+                }
+                catch (IOException)
+                {
+                    try { File.Delete(path); } catch (IOException) { } // never leave a half-written file behind
+                    return Results.StatusCode(StatusCodes.Status507InsufficientStorage);
+                }
             }
             Changed?.Invoke();
             return Results.Json(new { saved });
         });
+    }
+
+    /// <summary>Adds the Zone.Identifier stream (ZoneId=3, "Internet") so Windows shows its usual warning before running a received file.</summary>
+    private static void MarkFromInternet(string path)
+    {
+        try { File.WriteAllText(path + ":Zone.Identifier", "[ZoneTransfer]\r\nZoneId=3\r\n"); }
+        catch (Exception e) when (e is IOException or NotSupportedException or UnauthorizedAccessException) { } // not NTFS
     }
 
     public async ValueTask DisposeAsync() => await StopAsync().ConfigureAwait(false);
