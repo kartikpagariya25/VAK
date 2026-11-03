@@ -25,6 +25,9 @@ public static class WidgetCatalog
     private static IEnumerable<WidgetModule> BatchTwo(AppHost host) => new[]
     {
         new WidgetModule(
+            new WidgetInfo("screentime", "Screen Time", "", "chart", new[] { "usage", "apps", "limit", "time", "focus" }, true),
+            () => new Cards.ScreenTimeCard(host), () => new Pages.ScreenTimePage(host), "How long you spend in each app"),
+        new WidgetModule(
             new WidgetInfo("clipboard", "Clipboard", "History", "clipboard", new[] { "copy", "paste", "history", "text", "images" }, true),
             () => new Cards.ClipboardCard(host), () => new Pages.ClipboardPage(host), "Everything you copied, one click away"),
         new WidgetModule(

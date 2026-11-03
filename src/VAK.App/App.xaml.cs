@@ -14,6 +14,7 @@ public partial class App : Application
     private HotkeyService? _hotkey;
     private TrayService? _tray;
     private ClipboardMonitor? _clipboard;
+    private ScreenTimeTracker? _screenTime;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -33,6 +34,7 @@ public partial class App : Application
         var settings = host.Settings;
 
         host.ClipboardMonitor = _clipboard = new ClipboardMonitor(host.Clipboard, host.DataDir);
+        host.ScreenTimeTracker = _screenTime = new ScreenTimeTracker(host.ScreenTime);
         _shell = new ShellWindow(host);
         var leftArg = Array.IndexOf(e.Args, "--left");
         if (leftArg >= 0 && leftArg + 1 < e.Args.Length && double.TryParse(e.Args[leftArg + 1], out var left))
@@ -74,6 +76,7 @@ public partial class App : Application
     {
         _hotkey?.Dispose();
         _clipboard?.Dispose();
+        _screenTime?.Flush();
         _tray?.Dispose();
         _singleInstance?.Dispose();
         base.OnExit(e);

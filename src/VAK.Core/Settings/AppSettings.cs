@@ -9,6 +9,7 @@ public class AppSettings
     public string?[] HomeSlots { get; set; } = new string?[6];
     public bool HomeInitialized { get; set; }
     public string SearchEngine { get; set; } = "google";
+    public int ScreenTimeLimitMinutes { get; set; } = 420;
     public List<string> Dock { get; set; } = new() { "system", "clock", "timers" };
     public ClockSettings Clock { get; set; } = new();
     public TimerSettings Timers { get; set; } = new();
