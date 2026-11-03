@@ -8,6 +8,7 @@ public class AppSettings
     public string Theme { get; set; } = "dark";
     public string?[] HomeSlots { get; set; } = new string?[6];
     public bool HomeInitialized { get; set; }
+    public string SearchEngine { get; set; } = "google";
     public List<string> Dock { get; set; } = new() { "system", "clock", "timers" };
     public ClockSettings Clock { get; set; } = new();
     public TimerSettings Timers { get; set; } = new();

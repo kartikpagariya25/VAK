@@ -48,12 +48,16 @@ public sealed class AppHost
     public string DataDir { get; }
     public CurrencyService Currency { get; }
     public WeatherService Weather { get; }
+    public Core.Notes.NotesRepository Notes { get; }
+    public Core.Links.LinksRepository Links { get; }
 
     public AppHost(string settingsPath)
     {
         DataDir = System.IO.Path.GetDirectoryName(settingsPath)!;
         Currency = new CurrencyService(DataDir);
         Weather = new WeatherService(this);
+        Notes = new Core.Notes.NotesRepository(System.IO.Path.Combine(DataDir, "notes.json"), () => DateTime.Now);
+        Links = new Core.Links.LinksRepository(System.IO.Path.Combine(DataDir, "links.json"));
         Monitor = new SystemMonitor(this);
         _store = new SettingsStore(settingsPath);
         Settings = _store.Load();

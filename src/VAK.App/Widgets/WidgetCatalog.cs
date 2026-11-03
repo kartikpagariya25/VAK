@@ -25,6 +25,12 @@ public static class WidgetCatalog
     private static IEnumerable<WidgetModule> BatchTwo(AppHost host) => new[]
     {
         new WidgetModule(
+            new WidgetInfo("notes", "Notes", "", "note", new[] { "note", "write", "memo", "text" }, true),
+            () => new Cards.NotesCard(host), () => new Pages.NotesPage(host), "Quick notes that save as you type"),
+        new WidgetModule(
+            new WidgetInfo("links", "Links", "Quick Bookmarks", "link", new[] { "bookmarks", "search", "web", "google", "url" }, false),
+            () => Placeholder("Links"), () => new Pages.LinksPage(host), "Search the web and keep saved links"),
+        new WidgetModule(
             new WidgetInfo("weather", "Weather", "", "partly-day", new[] { "forecast", "temperature", "rain", "city", "hourly" }, true),
             () => new Cards.WeatherCard(host), () => new Pages.WeatherPage(host), "Current conditions and forecast"),
         new WidgetModule(
