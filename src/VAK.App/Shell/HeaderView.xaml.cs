@@ -9,6 +9,7 @@ public partial class HeaderView : UserControl
 {
     public event Action? SettingsClicked;
     public event Action? CloseClicked;
+    public event Action? PowerClicked;
     public event Action<bool>? PinToggled;
     public event Action<bool>? EditToggled;
 
@@ -24,6 +25,7 @@ public partial class HeaderView : UserControl
         System.Windows.Automation.AutomationProperties.SetName(CloseButton, "Close");
         PinIcon.Text = Icons.Glyph("pin");
         SettingsIcon.Text = Icons.Glyph("settings");
+        PowerIcon.Text = Icons.Glyph("power");
         CloseIcon.Text = Icons.Glyph("close");
         PinButton.Click += (_, _) =>
         {
@@ -39,6 +41,8 @@ public partial class HeaderView : UserControl
         };
         SettingsButton.Click += (_, _) => SettingsClicked?.Invoke();
         CloseButton.Click += (_, _) => CloseClicked?.Invoke();
+        PowerButton.Click += (_, _) => PowerClicked?.Invoke();
+        System.Windows.Automation.AutomationProperties.SetName(PowerButton, "Turn off the notch");
     }
 
     /// <summary>On Home the pin slot becomes the Edit button; everywhere else it keeps the panel open.</summary>

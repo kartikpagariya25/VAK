@@ -41,6 +41,17 @@ public sealed class AppHost
     /// <summary>Raised after the Settings window changes something the shell has to re-apply (notch, theme, live activities, dock).</summary>
     public event Action? SettingsApplied;
 
+    /// <summary>Raised after the user turned the notch off from its power button (it keeps running; the hotkey brings it back).</summary>
+    public event Action? NotchTurnedOff;
+
+    /// <summary>Hides the notch but keeps VAK running in the background so the open shortcut still works.</summary>
+    public void TurnOffNotch()
+    {
+        Settings.Notch.ShowNotch = false;
+        Apply();
+        NotchTurnedOff?.Invoke();
+    }
+
     /// <summary>Raised after the theme changed, so windows and pages that fetched brushes in code can rebuild.</summary>
     public event Action? ThemeChanged;
     public void RaiseThemeChanged() => ThemeChanged?.Invoke();

@@ -6,3 +6,6 @@ obj/
 node_modules/
 *.log
 .DS_Store
+
+# build output
+dist/

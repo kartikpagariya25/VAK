@@ -23,6 +23,9 @@
             <Button x:Name="SettingsButton" Style="{StaticResource Style.RoundButton}" Width="34" Height="34" ToolTip="Settings">
                 <TextBlock x:Name="SettingsIcon" Style="{StaticResource Style.Icon}"/>
             </Button>
+            <Button x:Name="PowerButton" Style="{StaticResource Style.RoundButton}" Width="34" Height="34" ToolTip="Turn off the notch (the shortcut brings it back)">
+                <TextBlock x:Name="PowerIcon" Style="{StaticResource Style.Icon}"/>
+            </Button>
             <Button x:Name="CloseButton" Style="{StaticResource Style.RoundButton}" Width="34" Height="34" ToolTip="Close">
                 <TextBlock x:Name="CloseIcon" Style="{StaticResource Style.Icon}"/>
             </Button>
