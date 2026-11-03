@@ -61,6 +61,7 @@ public sealed class AppHost
     public Core.Shelf.ShelfStore Shelf { get; }
     public ConverterService Converter { get; }
     public CalendarService Calendar { get; }
+    public AiWebViews AiWeb { get; }
     public Core.Drop.DropServer Drop { get; } = new(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "VAK Drop"));
     public ScreenTimeTracker? ScreenTimeTracker { get; set; }
 
@@ -94,6 +95,7 @@ public sealed class AppHost
         Timers = new TimersService(this);
         Converter = new ConverterService(this);
         Calendar = new CalendarService(DataDir);
+        AiWeb = new AiWebViews(DataDir);
         foreach (var module in WidgetCatalog.Build(this))
         {
             Registry.Register(module.Info);

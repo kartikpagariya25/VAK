@@ -16,6 +16,7 @@ public class AppSettings
     public WeatherSettings Weather { get; set; } = new();
     public MessageSettings Message { get; set; } = new();
     public ConverterSettings Converter { get; set; } = new();
+    public AiSettings Ai { get; set; } = new();
     public List<WorldClockEntry> WorldClocks { get; set; } = new();
     public bool WorldClocksInitialized { get; set; }
     public int WaterToday { get; set; }
@@ -41,6 +42,14 @@ public class TimerSettings
     public int Cycles { get; set; } = 4;
     public bool AutoStartNext { get; set; } = true;
     public int CountdownMinutes { get; set; } = 15;
+}
+
+public class AiSettings
+{
+    /// <summary>"claude" or "gpt".</summary>
+    public string Provider { get; set; } = "claude";
+    /// <summary>"web" (the real site in an embedded browser) or "api" (native chat with an API key).</summary>
+    public string Mode { get; set; } = "web";
 }
 
 public class ConverterSettings

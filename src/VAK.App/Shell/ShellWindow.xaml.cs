@@ -13,7 +13,8 @@ namespace VAK.App.Shell;
 public partial class ShellWindow : Window
 {
     private const double CollapsedWidth = 200, CollapsedHeight = 34, CollapsedRadius = 18;
-    private const double ExpandedWidth = 800, ExpandedHeight = 388, ExpandedRadius = 28;
+    private const double ExpandedWidth = 800, DefaultExpandedHeight = 388, MaxExpandedHeight = 580, ExpandedRadius = 28;
+    private double _expandedHeight = DefaultExpandedHeight;
 
     public static readonly DependencyProperty IslandRadiusProperty = DependencyProperty.Register(
         nameof(IslandRadius), typeof(double), typeof(ShellWindow),
@@ -41,6 +42,7 @@ public partial class ShellWindow : Window
         _host = host;
         var content = new ShellContent(host);
         content.CloseRequested += Collapse;
+        content.PanelHeightRequested += SetPanelHeight;
         content.PinToggled += pinned => _hover!.KeepOpen = pinned;
         PageHost.Content = content;
         PositionTopCenter();
@@ -62,6 +64,17 @@ public partial class ShellWindow : Window
         _fullscreenTimer.Tick += (_, _) => CheckFullscreen();
         _fullscreenTimer.Start();
         RefreshPill();
+    }
+
+    /// <summary>A page may ask for a taller panel (the AI chat does). The island grows or shrinks to it; collapsed it stays a pill.</summary>
+    public void SetPanelHeight(double height)
+    {
+        height = Math.Clamp(height, DefaultExpandedHeight, MaxExpandedHeight);
+        if (Math.Abs(height - _expandedHeight) < 0.5) return;
+        _expandedHeight = height;
+        PageHost.Height = height;
+        if (!IsExpanded) return;
+        Island.BeginAnimation(HeightProperty, new DoubleAnimation(height, TimeSpan.FromMilliseconds(220)) { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut } });
     }
 
     public void Toggle() { if (IsExpanded) Collapse(); else Expand(); }
@@ -136,7 +149,7 @@ public partial class ShellWindow : Window
             new(to, TimeSpan.FromMilliseconds(ms)) { EasingFunction = ease, BeginTime = TimeSpan.FromMilliseconds(delay) };
 
         Island.BeginAnimation(WidthProperty, Da(expand ? ExpandedWidth : CollapsedWidth));
-        Island.BeginAnimation(HeightProperty, Da(expand ? ExpandedHeight : CollapsedHeight));
+        Island.BeginAnimation(HeightProperty, Da(expand ? _expandedHeight : CollapsedHeight));
         BeginAnimation(IslandRadiusProperty, Da(expand ? ExpandedRadius : CollapsedRadius));
         PillView.BeginAnimation(OpacityProperty, Da(expand ? 0 : 1, 120, expand ? 0 : 130));
         PageHost.BeginAnimation(OpacityProperty, Da(expand ? 1 : 0, 150, expand ? 100 : 0));
@@ -161,7 +174,7 @@ public partial class ShellWindow : Window
 
         // The notch itself plus a small margin, not a wide strip: reaching for a title bar or tab near the top must not pop the panel.
         var trigger = new Rect(centerX - (CollapsedWidth / 2 + 8) * s, origin.Y - 5, (CollapsedWidth + 16) * s, (CollapsedHeight + 8) * s);
-        var panel = new Rect(centerX - (ExpandedWidth / 2 + 6) * s, origin.Y, (ExpandedWidth + 12) * s, (ExpandedHeight + 6) * s);
+        var panel = new Rect(centerX - (ExpandedWidth / 2 + 6) * s, origin.Y, (ExpandedWidth + 12) * s, (_expandedHeight + 6) * s);
         return (trigger, panel);
     }
 

@@ -35,7 +35,7 @@ public static class WidgetCatalog
             () => Placeholder("Drop"), () => new Pages.DropPage(host), "Send files to and from phones on your network"),
         new WidgetModule(
             new WidgetInfo("aicoding", "AI Coding", "Claude and GPT", "bot", new[] { "claude", "gpt", "chatgpt", "chat", "ai", "prompt" }, false),
-            () => Placeholder("AI Coding"), () => Placeholder("AI chat is being built"), "Chat with Claude and GPT from the island"),
+            () => Placeholder("AI Coding"), () => new Pages.AiChatPage(host), "Chat with Claude and GPT from the island"),
         new WidgetModule(
             new WidgetInfo("fileshelf", "File Shelf", "Parked files", "folder", new[] { "files", "drag", "drop", "park", "shelf", "stash" }, false),
             () => Placeholder("File Shelf"), () => new Pages.FileShelfPage(host), "Park files and drag them back out"),

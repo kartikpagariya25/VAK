@@ -7,3 +7,9 @@ public interface IHeaderExtras
 {
     UIElement CreateHeaderExtras();
 }
+
+/// <summary>A page that needs more vertical room than the standard 388 px panel.</summary>
+public interface ITallPage
+{
+    double PreferredHeight { get; }
+}
