@@ -22,6 +22,23 @@ public sealed class AppHost
     public IPerformanceService Performance { get; } = new WindowsPerformanceService();
     public IVolumeService Volume { get; } = new WindowsVolumeService();
 
+    public Core.Startup.StartupRegistry Startup { get; } =
+        new(Core.Startup.StartupRegistry.RunKeyPath, "VAK", Environment.ProcessPath ?? "");
+
+    /// <summary>Raised when Start with Windows changes from anywhere (Settings page or tray menu).</summary>
+    public event Action<bool>? StartWithWindowsChanged;
+
+    /// <summary>Set by the app shell: tries to register a new global hotkey and returns false if another app holds it.</summary>
+    public Func<string, bool>? TryApplyHotkey { get; set; }
+
+    public void SetStartWithWindows(bool enabled)
+    {
+        Startup.Set(enabled);
+        Settings.StartWithWindows = enabled;
+        Save();
+        StartWithWindowsChanged?.Invoke(enabled);
+    }
+
     public SystemMonitor Monitor { get; }
     public TimersService Timers { get; }
 
@@ -30,6 +47,7 @@ public sealed class AppHost
         Monitor = new SystemMonitor(this);
         _store = new SettingsStore(settingsPath);
         Settings = _store.Load();
+        Settings.StartWithWindows = Startup.IsEnabled; // the Run key is the source of truth
         if (!Settings.WorldClocksInitialized)
         {
             Settings.WorldClocks.AddRange(new[]

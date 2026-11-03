@@ -35,6 +35,8 @@ public partial class App : Application
         _tray = new TrayService(settings.StartWithWindows);
         _tray.ShowHideRequested += () => _shell.Toggle();
         _tray.QuitRequested += Shutdown;
+        _tray.StartWithWindowsChanged += host.SetStartWithWindows;
+        host.StartWithWindowsChanged += _tray.SetStartWithWindows;
 
         host.Timers.Notice += message =>
         {
@@ -44,6 +46,7 @@ public partial class App : Application
 
         _hotkey = new HotkeyService(_shell);
         _hotkey.Pressed += () => _shell.Toggle();
+        host.TryApplyHotkey = hk => _hotkey.Register(hk);
         if (!_hotkey.Register(settings.Hotkey))
             _tray.ShowNotice("VAK", $"The hotkey {settings.Hotkey} is already in use. Hover the top of the screen instead, or change it in Settings.");
     }

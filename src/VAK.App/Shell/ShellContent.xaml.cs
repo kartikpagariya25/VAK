@@ -70,7 +70,8 @@ public partial class ShellContent : UserControl
         if (id == Navigator.Settings)
         {
             (title, subtitle) = ("Settings", "");
-            page = new TextBlock { Text = "Settings", Foreground = System.Windows.Media.Brushes.Gray, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+            (title, subtitle) = ("Settings", "Preferences");
+            page = new Pages.SettingsPage(_host);
         }
         else
         {
