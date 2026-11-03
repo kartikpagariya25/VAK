@@ -1,7 +1,7 @@
 {
-  "name": "isla",
+  "name": "vak",
   "version": "0.1.0",
-  "description": "A glass dynamic island for Windows - AI chat, clock, file shelf, and a file converter, always one hover away.",
+  "description": "VAK - a glass dynamic island for Windows: AI chat, clock, file shelf, converter, and more, always one hover away.",
   "main": "electron/main.js",
   "author": "Kartik Pagariya",
   "license": "MIT",
@@ -18,8 +18,8 @@
     "archiver": "^7.0.1"
   },
   "build": {
-    "appId": "dev.kartik.isla",
-    "productName": "Isla",
+    "appId": "dev.kartik.vak",
+    "productName": "VAK",
     "win": {
       "target": "nsis",
       "icon": "assets/icon.ico"

@@ -100,13 +100,13 @@ function createTray() {
   const iconPath = path.join(__dirname, '..', 'assets', 'tray.png');
   const icon = fs.existsSync(iconPath) ? nativeImage.createFromPath(iconPath) : nativeImage.createEmpty();
   tray = new Tray(icon);
-  tray.setToolTip('Isla');
+  tray.setToolTip('VAK');
   tray.setContextMenu(Menu.buildFromTemplate([
     { label: 'Show / Hide', click: () => win.isVisible() ? win.hide() : win.show() },
     { label: 'Start with Windows', type: 'checkbox', checked: app.getLoginItemSettings().openAtLogin,
       click: (item) => app.setLoginItemSettings({ openAtLogin: item.checked }) },
     { type: 'separator' },
-    { label: 'Quit Isla', click: () => app.quit() },
+    { label: 'Quit VAK', click: () => app.quit() },
   ]));
 }
 
