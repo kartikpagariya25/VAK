@@ -29,6 +29,16 @@ public sealed class AppHost
         Monitor = new SystemMonitor(this);
         _store = new SettingsStore(settingsPath);
         Settings = _store.Load();
+        if (!Settings.WorldClocksInitialized)
+        {
+            Settings.WorldClocks.AddRange(new[]
+            {
+                new Core.Settings.WorldClockEntry("New York", "Eastern Standard Time"),
+                new Core.Settings.WorldClockEntry("London", "GMT Standard Time"),
+                new Core.Settings.WorldClockEntry("Tokyo", "Tokyo Standard Time"),
+            });
+            Settings.WorldClocksInitialized = true;
+        }
         foreach (var module in WidgetCatalog.Build(this))
         {
             Registry.Register(module.Info);

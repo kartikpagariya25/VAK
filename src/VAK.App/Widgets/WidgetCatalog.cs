@@ -16,7 +16,7 @@ public static class WidgetCatalog
             () => new Cards.SystemCard(host), () => new Pages.SystemPage(host), "Live performance at a glance"),
         new WidgetModule(
             new WidgetInfo("clock", "Clock", "Local Time & Date", "clock", new[] { "time", "date", "world", "zones" }, true),
-            () => Placeholder("Clock card"), () => Placeholder("Clock"), "Local time and world clocks"),
+            () => new Cards.ClockCard(host), () => new Pages.ClockPage(host), "Local time and world clocks"),
         new WidgetModule(
             new WidgetInfo("timers", "Timers", "Focus & intervals", "timers", new[] { "pomodoro", "focus", "stopwatch", "countdown", "water" }, true),
             () => Placeholder("Timers card"), () => Placeholder("Timers"), "Pomodoro, countdown, stopwatch, water"),

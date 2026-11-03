@@ -36,6 +36,26 @@ public class ClockFormatterTests
     public void HeaderDate_Is_Tuesday_Nov_3() =>
         Assert.Equal("Tuesday, Nov 3", ClockFormatter.HeaderDate(TimeZoneInfo.ConvertTime(Now, Ist)));
 
+    [Theory]
+    [InlineData("India Standard Time", "IST")]
+    [InlineData("Eastern Standard Time", "EST")]
+    [InlineData("GMT Standard Time", "GMT")]
+    [InlineData("Tokyo Standard Time", "JST")]
+    public void Abbreviation_KnownZones(string zoneId, string expected) =>
+        Assert.Equal(expected, ClockFormatter.Abbreviation(TimeZoneInfo.FindSystemTimeZoneById(zoneId), Now));
+
+    [Fact]
+    public void Abbreviation_DaylightSaving_UsesDaylightName() =>
+        Assert.Equal("EDT", ClockFormatter.Abbreviation(TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"),
+            new DateTimeOffset(2026, 7, 1, 12, 0, 0, TimeSpan.Zero)));
+
+    [Theory]
+    [InlineData("India Standard Time", "UTC+05:30")]
+    [InlineData("Eastern Standard Time", "UTC-05:00")]
+    [InlineData("GMT Standard Time", "UTC+00:00")]
+    public void UtcOffsetLabel_Formats(string zoneId, string expected) =>
+        Assert.Equal(expected, ClockFormatter.UtcOffsetLabel(TimeZoneInfo.FindSystemTimeZoneById(zoneId), Now));
+
     [Fact]
     public void TryFind_UnknownId_ReturnsNull() =>
         Assert.Null(ClockFormatter.TryFind("Not A Real Zone"));
