@@ -59,7 +59,7 @@ public sealed class AiChatPage : UserControl, IHeaderExtras, ITallPage
 
         if (ai.Mode == "api")
         {
-            _body.Children.Add(Message($"API chat for {provider.Name} is coming next. Switch to Website to use {provider.Name} now."));
+            _body.Children.Add(new AiApiChat(_host, provider.Id));
             return;
         }
         if (!AiWebViews.RuntimeAvailable())

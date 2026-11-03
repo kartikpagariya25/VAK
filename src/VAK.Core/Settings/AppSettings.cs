@@ -50,6 +50,8 @@ public class AiSettings
     public string Provider { get; set; } = "claude";
     /// <summary>"web" (the real site in an embedded browser) or "api" (native chat with an API key).</summary>
     public string Mode { get; set; } = "web";
+    /// <summary>The model last used for each provider in API mode.</summary>
+    public Dictionary<string, string> Models { get; set; } = new();
 }
 
 public class ConverterSettings

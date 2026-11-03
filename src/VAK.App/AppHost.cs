@@ -62,6 +62,9 @@ public sealed class AppHost
     public ConverterService Converter { get; }
     public CalendarService Calendar { get; }
     public AiWebViews AiWeb { get; }
+    public Core.Chat.ApiKeyVault ApiKeys { get; }
+    public Core.Chat.ChatStore Chats { get; }
+    public Core.Chat.ChatClient ChatApi { get; } = new();
     public Core.Drop.DropServer Drop { get; } = new(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "VAK Drop"));
     public ScreenTimeTracker? ScreenTimeTracker { get; set; }
 
@@ -96,6 +99,8 @@ public sealed class AppHost
         Converter = new ConverterService(this);
         Calendar = new CalendarService(DataDir);
         AiWeb = new AiWebViews(DataDir);
+        ApiKeys = new Core.Chat.ApiKeyVault(System.IO.Path.Combine(DataDir, "apikeys.dat"));
+        Chats = new Core.Chat.ChatStore(System.IO.Path.Combine(DataDir, "chats.json"));
         foreach (var module in WidgetCatalog.Build(this))
         {
             Registry.Register(module.Info);
