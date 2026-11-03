@@ -1,0 +1,30 @@
+<Window x:Class="VAK.App.Theme.DesignGalleryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="VAK design gallery" Width="860" Height="520" Background="{StaticResource Brush.Panel}"
+        WindowStartupLocation="CenterScreen">
+    <StackPanel Margin="24">
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+            <Image Source="{StaticResource Brand.Mark}" Width="40" Height="40"/>
+            <TextBlock Style="{StaticResource Style.Big}" Text="VAK design gallery" Margin="14,0,0,0" VerticalAlignment="Center"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" x:Name="Swatches" Margin="0,0,0,16"/>
+        <Border Style="{StaticResource Style.Card}" Margin="0,0,0,16">
+            <StackPanel>
+                <TextBlock Style="{StaticResource Style.Text}" FontWeight="Bold" Text="Inter Bold 13 - The quick brown fox 0123456789"/>
+                <TextBlock Style="{StaticResource Style.Text}" FontWeight="Medium" Text="Inter Medium 13 - The quick brown fox 0123456789"/>
+                <TextBlock Style="{StaticResource Style.TextDim}" Text="Inter Regular dim 13 - The quick brown fox 0123456789"/>
+                <TextBlock Style="{StaticResource Style.Big}" Text="25:00  Geist 30"/>
+            </StackPanel>
+        </Border>
+        <Border Style="{StaticResource Style.Card}">
+            <WrapPanel x:Name="IconGrid"/>
+        </Border>
+        <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+            <Button Style="{StaticResource Style.RoundButton}" Margin="0,0,8,0">
+                <TextBlock Style="{StaticResource Style.Icon}" x:Name="SampleIcon"/>
+            </Button>
+            <Border Style="{StaticResource Style.Pill}" Width="180" Height="36" BorderBrush="{StaticResource Brush.Control}" BorderThickness="1"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

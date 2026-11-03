@@ -1,0 +1,31 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- VAK mark: blue squircle, a white notch hanging from the top edge, two eyes. Original artwork. -->
+    <DrawingImage x:Key="Brand.Mark">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.ClipGeometry>
+                    <RectangleGeometry Rect="0,0,100,100" RadiusX="30" RadiusY="30"/>
+                </DrawingGroup.ClipGeometry>
+                <GeometryDrawing Brush="#2F7CF6">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="0,0,100,100"/>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#FFFFFF">
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry Figures="M22,-2 L78,-2 L78,34 A20,20 0 0 1 58,54 L42,54 A20,20 0 0 1 22,34 Z"/>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#0B0B0C">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <EllipseGeometry Center="39,28" RadiusX="6" RadiusY="6"/>
+                            <EllipseGeometry Center="61,28" RadiusX="6" RadiusY="6"/>
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+</ResourceDictionary>
