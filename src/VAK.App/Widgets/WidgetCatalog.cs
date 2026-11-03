@@ -20,6 +20,13 @@ public static class WidgetCatalog
         new WidgetModule(
             new WidgetInfo("timers", "Timers", "Focus & intervals", "timers", new[] { "pomodoro", "focus", "stopwatch", "countdown", "water" }, true),
             () => new Cards.FocusCard(host), () => new Pages.TimersPage(host), "Pomodoro, countdown, stopwatch, water"),
+    }.Concat(BatchTwo(host)).ToArray();
+
+    private static IEnumerable<WidgetModule> BatchTwo(AppHost host) => new[]
+    {
+        new WidgetModule(
+            new WidgetInfo("units", "Units", "Conversion", "ruler", new[] { "convert", "length", "mass", "temperature", "currency", "data", "speed" }, false),
+            () => Placeholder("Units"), () => new Pages.UnitsPage(host), "Length, mass, temperature, currency and more"),
     };
 
     // Replaced by the real cards and pages in the page tasks.

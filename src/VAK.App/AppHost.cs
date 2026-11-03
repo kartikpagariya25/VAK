@@ -44,8 +44,14 @@ public sealed class AppHost
     public SystemMonitor Monitor { get; }
     public TimersService Timers { get; }
 
+    /// <summary>Folder for everything VAK stores (settings, notes, clipboard, rates...).</summary>
+    public string DataDir { get; }
+    public CurrencyService Currency { get; }
+
     public AppHost(string settingsPath)
     {
+        DataDir = System.IO.Path.GetDirectoryName(settingsPath)!;
+        Currency = new CurrencyService(DataDir);
         Monitor = new SystemMonitor(this);
         _store = new SettingsStore(settingsPath);
         Settings = _store.Load();
