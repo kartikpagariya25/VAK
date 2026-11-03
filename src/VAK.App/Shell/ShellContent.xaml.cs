@@ -23,6 +23,8 @@ public partial class ShellContent : UserControl
 
         Header.CloseClicked += () => CloseRequested?.Invoke();
         Header.PinToggled += pinned => PinToggled?.Invoke(pinned);
+        Header.EditToggled += editing => { if (Page.Content is Pages.HomePage home) home.Editing = editing; };
+        UndoButton.Click += (_, _) => { if (Page.Content is Pages.HomePage home) home.Undo(); };
         Header.SettingsClicked += () => _host.Nav.GoTo(Navigator.Settings);
 
         Dock.Selected += id => { CloseAddDock(); _host.Nav.GoTo(id); };
@@ -78,6 +80,10 @@ public partial class ShellContent : UserControl
             page = module.CreatePage();
         }
         Header.SetPage(title, subtitle);
+        Header.SetHomeMode(id == Navigator.Home);
+        UndoButton.Visibility = Visibility.Collapsed;
+        if (page is Pages.HomePage homePage)
+            homePage.StateChanged += () => UndoButton.Visibility = homePage.Editing && homePage.CanUndo ? Visibility.Visible : Visibility.Collapsed;
         Dock.SetActive(id);
 
         Page.Content = page;

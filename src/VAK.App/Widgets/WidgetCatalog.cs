@@ -10,7 +10,7 @@ public static class WidgetCatalog
     {
         new WidgetModule(
             new WidgetInfo("home", "Home", "", "home", new[] { "widgets", "overview" }, false),
-            () => Placeholder("Home"), () => Placeholder("Home"), "Your widgets at a glance"),
+            () => Placeholder("Home"), () => new Pages.HomePage(host), "Your widgets at a glance"),
         new WidgetModule(
             new WidgetInfo("system", "System", "Power · Network · Audio", "system", new[] { "battery", "cpu", "ram", "network", "volume", "performance" }, true),
             () => Placeholder("System card"), () => Placeholder("System"), "Live performance at a glance"),
