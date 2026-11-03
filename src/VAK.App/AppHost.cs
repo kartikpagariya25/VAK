@@ -31,6 +31,12 @@ public sealed class AppHost
     /// <summary>Set by the app shell: tries to register a new global hotkey and returns false if another app holds it.</summary>
     public Func<string, bool>? TryApplyHotkey { get; set; }
 
+    /// <summary>The Message page asks the notch to show or clear a banner through these.</summary>
+    public event Action<Core.Message.BannerSpec>? BannerRequested;
+    public event Action? BannerCleared;
+    public void FlashBanner(Core.Message.BannerSpec spec) => BannerRequested?.Invoke(spec);
+    public void ClearBanner() => BannerCleared?.Invoke();
+
     public void SetStartWithWindows(bool enabled)
     {
         try { Startup.Set(enabled); }

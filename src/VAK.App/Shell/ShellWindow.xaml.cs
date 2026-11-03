@@ -28,6 +28,9 @@ public partial class ShellWindow : Window
     private readonly DispatcherTimer _fullscreenTimer = new() { Interval = TimeSpan.FromSeconds(1) };
     private DateTime _batteryAt = DateTime.MinValue;
 
+    private Core.Message.BannerSpec? _pendingBanner, _currentBanner;
+    private bool _showingBanner;
+
     public bool IsExpanded { get; private set; }
     public double IslandRadius { get => (double)GetValue(IslandRadiusProperty); set => SetValue(IslandRadiusProperty, value); }
     public event Action<bool>? ExpandedChanged;
@@ -51,6 +54,8 @@ public partial class ShellWindow : Window
         Microsoft.Win32.SystemEvents.DisplaySettingsChanged += (_, _) => Dispatcher.Invoke(PositionTopCenter);
 
         _hover = new HoverWatcher(() => IsExpanded, Regions, Expand, Collapse);
+        host.BannerRequested += ShowBanner;
+        host.BannerCleared += ClearBanner;
 
         _clockTimer.Tick += (_, _) => RefreshPill();
         _clockTimer.Start();
@@ -61,9 +66,49 @@ public partial class ShellWindow : Window
 
     public void Toggle() { if (IsExpanded) Collapse(); else Expand(); }
 
+    /// <summary>Flashes a banner on the collapsed notch. If the panel is open, it waits until the panel closes.</summary>
+    public void ShowBanner(Core.Message.BannerSpec spec)
+    {
+        if (IsExpanded) { _pendingBanner = spec; return; }
+        _pendingBanner = null;
+        _currentBanner = spec;
+        _showingBanner = true;
+        var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+        PillView.BeginAnimation(OpacityProperty, new DoubleAnimation(0, TimeSpan.FromMilliseconds(120)));
+        Island.BeginAnimation(WidthProperty, new DoubleAnimation(Controls.BannerView.PreferredWidth(spec), TimeSpan.FromMilliseconds(260)) { EasingFunction = ease });
+        BannerLayer.Visibility = Visibility.Visible;
+        BannerLayer.Play(spec, EndBanner);
+    }
+
+    private void EndBanner()
+    {
+        if (!_showingBanner) return;
+        _showingBanner = false;
+        _currentBanner = null;
+        BannerLayer.Visibility = Visibility.Collapsed;
+        var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+        Island.BeginAnimation(WidthProperty, new DoubleAnimation(CollapsedWidth, TimeSpan.FromMilliseconds(260)) { EasingFunction = ease });
+        PillView.BeginAnimation(OpacityProperty, new DoubleAnimation(1, TimeSpan.FromMilliseconds(200)));
+    }
+
+    public void ClearBanner()
+    {
+        _pendingBanner = null;
+        if (!_showingBanner) return;
+        BannerLayer.Stop();
+        EndBanner();
+    }
+
     public void Expand()
     {
         if (IsExpanded) return;
+        if (_showingBanner)
+        {
+            if (_currentBanner is { Repeat: true } keep) _pendingBanner = keep; // a "stay until cleared" banner returns after the panel closes
+            _showingBanner = false;
+            BannerLayer.Stop();
+            BannerLayer.Visibility = Visibility.Collapsed;
+        }
         IsExpanded = true;
         _hover.NotifyExpanded();
         Animate(true);
@@ -76,6 +121,12 @@ public partial class ShellWindow : Window
         IsExpanded = false;
         Animate(false);
         ExpandedChanged?.Invoke(false);
+        if (_pendingBanner is { } pending)
+        {
+            var wait = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(350) };
+            wait.Tick += (_, _) => { wait.Stop(); if (!IsExpanded) ShowBanner(pending); };
+            wait.Start();
+        }
     }
 
     private void Animate(bool expand)

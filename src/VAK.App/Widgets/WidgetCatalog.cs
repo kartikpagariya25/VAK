@@ -25,6 +25,9 @@ public static class WidgetCatalog
     private static IEnumerable<WidgetModule> BatchTwo(AppHost host) => new[]
     {
         new WidgetModule(
+            new WidgetInfo("message", "Message", "Notch banner", "message", new[] { "banner", "flash", "text", "notify", "announce" }, false),
+            () => Placeholder("Message"), () => new Pages.MessagePage(host), "Flash a short message on the notch"),
+        new WidgetModule(
             new WidgetInfo("screentime", "Screen Time", "", "chart", new[] { "usage", "apps", "limit", "time", "focus" }, true),
             () => new Cards.ScreenTimeCard(host), () => new Pages.ScreenTimePage(host), "How long you spend in each app"),
         new WidgetModule(
