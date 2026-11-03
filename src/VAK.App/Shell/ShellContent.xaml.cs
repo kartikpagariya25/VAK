@@ -81,6 +81,7 @@ public partial class ShellContent : UserControl
             page = module.CreatePage();
         }
         Header.SetPage(title, subtitle);
+        Header.SetExtras((page as Widgets.IHeaderExtras)?.CreateHeaderExtras());
         Header.SetHomeMode(id == Navigator.Home);
         UndoButton.Visibility = Visibility.Collapsed;
         if (page is Pages.HomePage homePage)

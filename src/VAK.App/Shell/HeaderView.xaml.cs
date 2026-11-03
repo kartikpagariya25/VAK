@@ -55,6 +55,9 @@ public partial class HeaderView : UserControl
         PinIcon.Foreground = editing ? (System.Windows.Media.Brush)FindResource("Brush.Accent") : (System.Windows.Media.Brush)FindResource("Brush.Text");
     }
 
+    /// <summary>Places a page's own controls (or nothing) to the left of the battery chip.</summary>
+    public void SetExtras(UIElement? extras) => Extras.Content = extras;
+
     public void SetPage(string title, string subtitle)
     {
         Title.Text = title;

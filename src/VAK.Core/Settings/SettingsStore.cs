@@ -34,6 +34,7 @@ public class SettingsStore
         if (loaded.Dock is null) loaded.Dock = defaults.Dock;
         if (loaded.Clock is null) loaded.Clock = defaults.Clock;
         if (loaded.Timers is null) loaded.Timers = defaults.Timers;
+        if (loaded.Weather is null) loaded.Weather = defaults.Weather;
         if (loaded.WorldClocks is null) loaded.WorldClocks = defaults.WorldClocks;
         return loaded;
     }

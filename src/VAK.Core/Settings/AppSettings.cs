@@ -11,6 +11,7 @@ public class AppSettings
     public List<string> Dock { get; set; } = new() { "system", "clock", "timers" };
     public ClockSettings Clock { get; set; } = new();
     public TimerSettings Timers { get; set; } = new();
+    public WeatherSettings Weather { get; set; } = new();
     public List<WorldClockEntry> WorldClocks { get; set; } = new();
     public bool WorldClocksInitialized { get; set; }
     public int WaterToday { get; set; }
@@ -36,6 +37,14 @@ public class TimerSettings
     public int Cycles { get; set; } = 4;
     public bool AutoStartNext { get; set; } = true;
     public int CountdownMinutes { get; set; } = 15;
+}
+
+public class WeatherSettings
+{
+    public string City { get; set; } = "";
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+    public bool Fahrenheit { get; set; }
 }
 
 public record WorldClockEntry(string Label, string TimeZoneId);

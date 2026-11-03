@@ -47,11 +47,13 @@ public sealed class AppHost
     /// <summary>Folder for everything VAK stores (settings, notes, clipboard, rates...).</summary>
     public string DataDir { get; }
     public CurrencyService Currency { get; }
+    public WeatherService Weather { get; }
 
     public AppHost(string settingsPath)
     {
         DataDir = System.IO.Path.GetDirectoryName(settingsPath)!;
         Currency = new CurrencyService(DataDir);
+        Weather = new WeatherService(this);
         Monitor = new SystemMonitor(this);
         _store = new SettingsStore(settingsPath);
         Settings = _store.Load();

@@ -25,6 +25,9 @@ public static class WidgetCatalog
     private static IEnumerable<WidgetModule> BatchTwo(AppHost host) => new[]
     {
         new WidgetModule(
+            new WidgetInfo("weather", "Weather", "", "partly-day", new[] { "forecast", "temperature", "rain", "city", "hourly" }, true),
+            () => new Cards.WeatherCard(host), () => new Pages.WeatherPage(host), "Current conditions and forecast"),
+        new WidgetModule(
             new WidgetInfo("units", "Units", "Conversion", "ruler", new[] { "convert", "length", "mass", "temperature", "currency", "data", "speed" }, false),
             () => Placeholder("Units"), () => new Pages.UnitsPage(host), "Length, mass, temperature, currency and more"),
     };
