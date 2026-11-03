@@ -1,7 +1,8 @@
 <Window x:Class="VAK.App.Shell.ShellWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="VAK" Width="800" Height="388"
+        xmlns:c="clr-namespace:VAK.App.Controls"
+        Title="VAK" Width="800" Height="600"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         Topmost="True" ShowInTaskbar="False" ResizeMode="NoResize" ShowActivated="False">
     <Grid>
@@ -20,6 +21,7 @@
                         <TextBlock x:Name="PillBatteryText" Style="{StaticResource Style.Text}" FontWeight="Medium"/>
                     </StackPanel>
                 </Grid>
+                <c:BannerView x:Name="BannerLayer" Visibility="Collapsed" IsHitTestVisible="False" Margin="12,0"/>
                 <!-- Expanded content is laid out at full size so it never reflows during the animation -->
                 <ContentControl x:Name="PageHost" Width="800" Height="388" HorizontalAlignment="Center"
                                 VerticalAlignment="Top" Opacity="0" IsHitTestVisible="False"/>

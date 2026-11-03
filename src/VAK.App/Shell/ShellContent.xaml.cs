@@ -14,6 +14,9 @@ public partial class ShellContent : UserControl
     private readonly DispatcherTimer _statusTimer = new() { Interval = TimeSpan.FromSeconds(30) };
 
     public event Action? CloseRequested;
+
+    /// <summary>The page now showing wants the panel this tall (388 unless the page says otherwise).</summary>
+    public event Action<double>? PanelHeightRequested;
     public event Action<bool>? PinToggled;
 
     public ShellContent(AppHost host)
@@ -81,6 +84,8 @@ public partial class ShellContent : UserControl
             page = module.CreatePage();
         }
         Header.SetPage(title, subtitle);
+        Header.SetExtras((page as Widgets.IHeaderExtras)?.CreateHeaderExtras());
+        PanelHeightRequested?.Invoke(page is Widgets.ITallPage tall ? tall.PreferredHeight : 388);
         Header.SetHomeMode(id == Navigator.Home);
         UndoButton.Visibility = Visibility.Collapsed;
         if (page is Pages.HomePage homePage)

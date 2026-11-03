@@ -27,6 +27,9 @@ public sealed class TrayService : IDisposable
         _icon.MouseClick += (_, e) => { if (e.Button == MouseButtons.Left) ShowHideRequested?.Invoke(); };
     }
 
+    /// <summary>Hover text of the tray icon (Windows allows 63 characters).</summary>
+    public void SetTooltip(string text) => _icon.Text = text.Length > 63 ? text[..63] : text;
+
     public void SetStartWithWindows(bool value) => _startup.Checked = value;
 
     public void ShowNotice(string title, string text) =>

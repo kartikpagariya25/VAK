@@ -15,7 +15,7 @@ public class HomeLayout
     public string?[] Slots { get; private set; }
     public bool CanUndo => _history.Count > 0;
 
-    public static HomeLayout Default() => new(new string?[] { "system", "timers", "clock", null, null, null });
+    public static HomeLayout Default() => new(new string?[] { "screentime", "system", "weather", "timers", "clipboard", "notes" });
 
     /// <summary>Puts a widget in a slot (null empties it). A widget lives in at most one slot, so assigning it elsewhere moves it.</summary>
     public void Assign(int slot, string? widgetId)

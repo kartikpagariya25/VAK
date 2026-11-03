@@ -11,6 +11,7 @@
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <ContentControl x:Name="Extras" Margin="0,0,14,0" VerticalAlignment="Center"/>
             <StackPanel x:Name="BatteryChip" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed">
                 <TextBlock x:Name="BatteryText" Style="{StaticResource Style.Text}" FontWeight="Medium" Margin="0,0,6,0"/>
                 <TextBlock x:Name="BatteryIcon" Style="{StaticResource Style.Icon}" FontSize="18" Foreground="{StaticResource Brush.Good}"/>

@@ -19,6 +19,9 @@ public partial class HeaderView : UserControl
     public HeaderView()
     {
         InitializeComponent();
+        System.Windows.Automation.AutomationProperties.SetName(PinButton, "Pin open or edit");
+        System.Windows.Automation.AutomationProperties.SetName(SettingsButton, "Settings");
+        System.Windows.Automation.AutomationProperties.SetName(CloseButton, "Close");
         PinIcon.Text = Icons.Glyph("pin");
         SettingsIcon.Text = Icons.Glyph("settings");
         CloseIcon.Text = Icons.Glyph("close");
@@ -54,6 +57,9 @@ public partial class HeaderView : UserControl
         PinIcon.Text = Icons.Glyph(editing ? "check" : "edit");
         PinIcon.Foreground = editing ? (System.Windows.Media.Brush)FindResource("Brush.Accent") : (System.Windows.Media.Brush)FindResource("Brush.Text");
     }
+
+    /// <summary>Places a page's own controls (or nothing) to the left of the battery chip.</summary>
+    public void SetExtras(UIElement? extras) => Extras.Content = extras;
 
     public void SetPage(string title, string subtitle)
     {

@@ -6,8 +6,8 @@ namespace VAK.Core.Tests;
 public class HomeLayoutTests
 {
     [Fact]
-    public void Default_Is_System_Timers_Clock_ThenEmpty() =>
-        Assert.Equal(new string?[] { "system", "timers", "clock", null, null, null }, HomeLayout.Default().Slots);
+    public void Default_Matches_TheReferenceHomeScreen() =>
+        Assert.Equal(new string?[] { "screentime", "system", "weather", "timers", "clipboard", "notes" }, HomeLayout.Default().Slots);
 
     [Fact]
     public void Assign_SetsSlot()
@@ -22,7 +22,7 @@ public class HomeLayoutTests
     {
         var l = HomeLayout.Default();
         l.Assign(5, "system");
-        Assert.Null(l.Slots[0]);
+        Assert.Null(l.Slots[1]);
         Assert.Equal("system", l.Slots[5]);
     }
 
@@ -38,10 +38,10 @@ public class HomeLayoutTests
     public void Undo_RestoresPreviousLayout_ThenNoOp()
     {
         var l = HomeLayout.Default();
-        l.Assign(3, "clock"); // moves clock from slot 2
+        l.Assign(3, "weather"); // moves weather from slot 2
         Assert.True(l.CanUndo);
         l.Undo();
-        Assert.Equal(new string?[] { "system", "timers", "clock", null, null, null }, l.Slots);
+        Assert.Equal(new string?[] { "screentime", "system", "weather", "timers", "clipboard", "notes" }, l.Slots);
         Assert.False(l.CanUndo);
         l.Undo(); // nothing left, must not throw
     }

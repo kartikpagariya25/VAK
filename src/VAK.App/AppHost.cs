@@ -31,6 +31,12 @@ public sealed class AppHost
     /// <summary>Set by the app shell: tries to register a new global hotkey and returns false if another app holds it.</summary>
     public Func<string, bool>? TryApplyHotkey { get; set; }
 
+    /// <summary>The Message page asks the notch to show or clear a banner through these.</summary>
+    public event Action<Core.Message.BannerSpec>? BannerRequested;
+    public event Action? BannerCleared;
+    public void FlashBanner(Core.Message.BannerSpec spec) => BannerRequested?.Invoke(spec);
+    public void ClearBanner() => BannerCleared?.Invoke();
+
     public void SetStartWithWindows(bool enabled)
     {
         try { Startup.Set(enabled); }
@@ -44,8 +50,37 @@ public sealed class AppHost
     public SystemMonitor Monitor { get; }
     public TimersService Timers { get; }
 
+    /// <summary>Folder for everything VAK stores (settings, notes, clipboard, rates...).</summary>
+    public string DataDir { get; }
+    public CurrencyService Currency { get; }
+    public WeatherService Weather { get; }
+    public Core.Notes.NotesRepository Notes { get; }
+    public Core.Links.LinksRepository Links { get; }
+    public Core.Clipboard.ClipboardHistory Clipboard { get; }
+    public Core.ScreenTime.ScreenTimeLog ScreenTime { get; }
+    public Core.Shelf.ShelfStore Shelf { get; }
+    public ConverterService Converter { get; }
+    public CalendarService Calendar { get; }
+    public AiWebViews AiWeb { get; }
+    public Core.Chat.ApiKeyVault ApiKeys { get; }
+    public Core.Chat.ChatStore Chats { get; }
+    public Core.Chat.ChatClient ChatApi { get; } = new();
+    public Core.Drop.DropServer Drop { get; } = new(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "VAK Drop"));
+    public ScreenTimeTracker? ScreenTimeTracker { get; set; }
+
+    /// <summary>Started by the app shell once the UI is up; null until then.</summary>
+    public ClipboardMonitor? ClipboardMonitor { get; set; }
+
     public AppHost(string settingsPath)
     {
+        DataDir = System.IO.Path.GetDirectoryName(settingsPath)!;
+        Currency = new CurrencyService(DataDir);
+        Weather = new WeatherService(this);
+        Notes = new Core.Notes.NotesRepository(System.IO.Path.Combine(DataDir, "notes.json"), () => DateTime.Now);
+        Links = new Core.Links.LinksRepository(System.IO.Path.Combine(DataDir, "links.json"));
+        Shelf = new Core.Shelf.ShelfStore(System.IO.Path.Combine(DataDir, "shelves"));
+        ScreenTime = new Core.ScreenTime.ScreenTimeLog(System.IO.Path.Combine(DataDir, "screentime.json"), () => DateTime.Now);
+        Clipboard = new Core.Clipboard.ClipboardHistory(System.IO.Path.Combine(DataDir, "clipboard.json"), () => DateTime.Now);
         Monitor = new SystemMonitor(this);
         _store = new SettingsStore(settingsPath);
         Settings = _store.Load();
@@ -61,6 +96,11 @@ public sealed class AppHost
             Settings.WorldClocksInitialized = true;
         }
         Timers = new TimersService(this);
+        Converter = new ConverterService(this);
+        Calendar = new CalendarService(DataDir);
+        AiWeb = new AiWebViews(DataDir);
+        ApiKeys = new Core.Chat.ApiKeyVault(System.IO.Path.Combine(DataDir, "apikeys.dat"));
+        Chats = new Core.Chat.ChatStore(System.IO.Path.Combine(DataDir, "chats.json"));
         foreach (var module in WidgetCatalog.Build(this))
         {
             Registry.Register(module.Info);
