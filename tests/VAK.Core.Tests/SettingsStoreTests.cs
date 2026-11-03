@@ -21,6 +21,11 @@ public class SettingsStoreTests : IDisposable
     }
 
     [Fact]
+    public void Default_Dock_HoldsEveryWidgetInReferenceOrder() =>
+        Assert.Equal(new[] { "system", "clipboard", "notes", "timers", "fileshelf", "drop", "weather", "clock", "units", "links", "message", "screentime", "aicoding" },
+            new AppSettings().Dock);
+
+    [Fact]
     public void Save_Then_Load_RoundTrips()
     {
         var store = new SettingsStore(FilePath);
