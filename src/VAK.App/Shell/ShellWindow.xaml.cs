@@ -93,6 +93,7 @@ public partial class ShellWindow : Window
     public void ApplySettings(bool animate)
     {
         var s = _settings;
+        if (!s.Notch.ShowNotch && IsExpanded) Collapse();
         var themeChanged = ThemeService.Apply(s.Appearance.Theme);
         _shape = NotchGeometry.Collapsed(s.Notch);
         ApplyEffects();
@@ -232,7 +233,12 @@ public partial class ShellWindow : Window
         Island.BeginAnimation(HeightProperty, new DoubleAnimation(height, TimeSpan.FromMilliseconds(220)) { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut } });
     }
 
-    public void Toggle() { if (IsExpanded) Collapse(); else Expand(); }
+    /// <summary>The open shortcut. If the notch was turned off with its power button, this turns it back on and opens it.</summary>
+    public void Toggle()
+    {
+        if (!_settings.Notch.ShowNotch) { _settings.Notch.ShowNotch = true; _host.Apply(); Expand(); return; }
+        if (IsExpanded) Collapse(); else Expand();
+    }
 
     private void OnPillClicked()
     {
@@ -414,7 +420,8 @@ public partial class ShellWindow : Window
 
     private void RefreshMode()
     {
-        var hide = NativeMethods.SHQueryUserNotificationState(out var state) == 0 && state is 2 or 3 or 4;
+        // Windows reports "busy" (2) for many things, including screenshot tools; only trust it when a window really covers the display.
+        var hide = NativeMethods.SHQueryUserNotificationState(out var state) == 0 && (state is 3 or 4 || state == 2 && ForegroundCoversNotchDisplay());
         _fullscreen = hide;
         var mode = NotchPolicy.Decide(_settings.Notch, hide, ForegroundMaximizedOnNotchDisplay());
         if (IsExpanded || _showingBanner) mode = NotchMode.Full;
@@ -428,6 +435,28 @@ public partial class ShellWindow : Window
         UpdatePillVisibility();
         if (!IsExpanded && !_showingBanner) SetCollapsedGeometry(true);
         UpdateEdgeLight();
+    }
+
+    private System.Windows.Forms.Screen NotchScreen()
+    {
+        var screens = System.Windows.Forms.Screen.AllScreens;
+        var want = _settings.Notch.Display;
+        return (want != "primary" ? screens.FirstOrDefault(s => s.DeviceName == want) : null) ?? System.Windows.Forms.Screen.PrimaryScreen ?? screens[0];
+    }
+
+    /// <summary>True when the front window (not the desktop, not VAK) covers the whole notch display: a real fullscreen app or video.</summary>
+    private bool ForegroundCoversNotchDisplay()
+    {
+        var hwnd = NativeMethods.GetForegroundWindow();
+        if (hwnd == IntPtr.Zero) return false;
+        NativeMethods.GetWindowThreadProcessId(hwnd, out var pid);
+        if (pid == Environment.ProcessId) return false;
+        var name = new System.Text.StringBuilder(64);
+        NativeMethods.GetClassName(hwnd, name, name.Capacity);
+        if (name.ToString() is "Progman" or "WorkerW" or "Shell_TrayWnd") return false;
+        if (!NativeMethods.GetWindowRect(hwnd, out var r)) return false;
+        var b = NotchScreen().Bounds;
+        return r.Left <= b.Left && r.Top <= b.Top && r.Right >= b.Right && r.Bottom >= b.Bottom;
     }
 
     private bool ForegroundMaximizedOnNotchDisplay()

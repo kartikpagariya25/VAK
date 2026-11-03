@@ -25,6 +25,7 @@ public partial class ShellContent : UserControl
         _host = host;
 
         Header.CloseClicked += () => CloseRequested?.Invoke();
+        Header.PowerClicked += () => _host.TurnOffNotch();
         Header.PinToggled += pinned => PinToggled?.Invoke(pinned);
         Header.EditToggled += editing => { if (Page.Content is Pages.HomePage home) home.Editing = editing; };
         UndoButton.Click += (_, _) => { if (Page.Content is Pages.HomePage home) home.Undo(); };

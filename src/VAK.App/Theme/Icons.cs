@@ -12,7 +12,7 @@ public static class Icons
         ["next"] = 0xf569, ["search"] = 0xf68f, ["up"] = 0xf19b, ["down"] = 0xf148,
         ["water"] = 0xe590, ["edit"] = 0xf3dd, ["chevron"] = 0xf2a3, ["undo"] = 0xf199,
         ["check"] = 0xf294, ["minus"] = 0xebd0, ["globe"] = 0xf45a, ["hourglass"] = 0xef6b,
-        ["trash"] = 0xf34c,
+        ["trash"] = 0xf34c, ["power"] = 0xf60e,
         // widgets, batch 2
         ["ruler"] = 0xf67c, ["scale"] = 0xea50, ["temperature"] = 0xf78f, ["database"] = 0xe466, ["speed"] = 0xed9b,
         ["partly-day"] = 0xf880, ["partly-night"] = 0xf883, ["moon"] = 0xf87d, ["sunny"] = 0xf8a1, ["cloudy"] = 0xf86e,

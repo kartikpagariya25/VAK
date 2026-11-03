@@ -56,6 +56,7 @@ public partial class App : Application
         _tray = new TrayService(settings.StartWithWindows);
         _tray.ShowHideRequested += () => _shell.Toggle();
         _tray.QuitRequested += Shutdown;
+        host.NotchTurnedOff += () => _tray.ShowNotice("VAK is off", $"Press {settings.Hotkey} to bring the notch back. Quit it from the tray icon.");
         _tray.SettingsRequested += () => OpenSettings(null);
         _tray.StartWithWindowsChanged += host.SetStartWithWindows;
         host.StartWithWindowsChanged += _tray.SetStartWithWindows;
