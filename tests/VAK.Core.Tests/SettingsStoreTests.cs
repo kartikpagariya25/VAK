@@ -55,4 +55,30 @@ public class SettingsStoreTests : IDisposable
         var s = new SettingsStore(FilePath).Load();
         Assert.True(s.Use24Hour);
     }
+
+    [Theory]
+    [InlineData("{\"Dock\":null}")]
+    [InlineData("{\"Clock\":null}")]
+    [InlineData("{\"Timers\":null}")]
+    [InlineData("{\"WorldClocks\":null}")]
+    [InlineData("{\"HomeSlots\":null}")]
+    public void Load_ExplicitNulls_FallBackToDefaults(string json)
+    {
+        File.WriteAllText(FilePath, json);
+        var s = new SettingsStore(FilePath).Load();
+        Assert.NotNull(s.Dock);
+        Assert.NotNull(s.Clock);
+        Assert.NotNull(s.Timers);
+        Assert.NotNull(s.WorldClocks);
+        Assert.Equal(6, s.HomeSlots.Length);
+        Assert.Equal(25, s.Timers.FocusMinutes);
+    }
+
+    [Fact]
+    public void Save_UnwritableLocation_DoesNotThrow()
+    {
+        var blocker = Path.Combine(_dir, "blocker");
+        File.WriteAllText(blocker, "x"); // a file where a directory is needed
+        new SettingsStore(Path.Combine(blocker, "settings.json")).Save(new AppSettings());
+    }
 }

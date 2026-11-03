@@ -33,7 +33,9 @@ public sealed class AppHost
 
     public void SetStartWithWindows(bool enabled)
     {
-        Startup.Set(enabled);
+        try { Startup.Set(enabled); }
+        catch (Exception e) when (e is UnauthorizedAccessException or System.Security.SecurityException or System.IO.IOException) { }
+        enabled = Startup.IsEnabled; // report what actually happened, so a denied registry write shows as unchanged
         Settings.StartWithWindows = enabled;
         Save();
         StartWithWindowsChanged?.Invoke(enabled);

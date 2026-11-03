@@ -81,10 +81,10 @@ public partial class TimersPage : UserControl
         skip.Click += (_, _) => { timers.Pomodoro.Skip(); timers.Touch(); };
         PomoButtons.Children.Add(reset); PomoButtons.Children.Add(play); PomoButtons.Children.Add(skip);
 
-        Steppers.Children.Add(Stepper(() => $"Focus {t.FocusMinutes}m", () => t.FocusMinutes = Math.Max(5, t.FocusMinutes - 5), () => t.FocusMinutes = Math.Min(180, t.FocusMinutes + 5)));
-        Steppers.Children.Add(Stepper(() => $"Break {t.BreakMinutes}m", () => t.BreakMinutes = Math.Max(1, t.BreakMinutes - 1), () => t.BreakMinutes = Math.Min(60, t.BreakMinutes + 1)));
-        Steppers.Children.Add(Stepper(() => $"Long {t.LongBreakMinutes}m", () => t.LongBreakMinutes = Math.Max(5, t.LongBreakMinutes - 5), () => t.LongBreakMinutes = Math.Min(60, t.LongBreakMinutes + 5)));
-        Steppers.Children.Add(Stepper(() => $"Cycles {t.Cycles}", () => t.Cycles = Math.Max(1, t.Cycles - 1), () => t.Cycles = Math.Min(12, t.Cycles + 1)));
+        Steppers.Children.Add(Stepper(() => $"Focus {t.FocusMinutes}m", () => t.FocusMinutes = Math.Max(5, t.FocusMinutes - 5), () => t.FocusMinutes = Math.Min(180, t.FocusMinutes + 5), _host.Timers.PomodoroSettingsChanged));
+        Steppers.Children.Add(Stepper(() => $"Break {t.BreakMinutes}m", () => t.BreakMinutes = Math.Max(1, t.BreakMinutes - 1), () => t.BreakMinutes = Math.Min(60, t.BreakMinutes + 1), _host.Timers.PomodoroSettingsChanged));
+        Steppers.Children.Add(Stepper(() => $"Long {t.LongBreakMinutes}m", () => t.LongBreakMinutes = Math.Max(5, t.LongBreakMinutes - 5), () => t.LongBreakMinutes = Math.Min(60, t.LongBreakMinutes + 5), _host.Timers.PomodoroSettingsChanged));
+        Steppers.Children.Add(Stepper(() => $"Cycles {t.Cycles}", () => t.Cycles = Math.Max(1, t.Cycles - 1), () => t.Cycles = Math.Min(12, t.Cycles + 1), _host.Timers.PomodoroSettingsChanged));
     }
 
     private void BuildCountdownControls(TimerSettings t)
@@ -96,7 +96,7 @@ public partial class TimersPage : UserControl
         play.Click += (_, _) => { var c = timers.Countdown; if (c.Running) c.Pause(); else c.Start(); timers.Touch(); };
         CountdownButtons.Children.Add(reset); CountdownButtons.Children.Add(play);
         CountdownStepper.Content = Stepper(() => $"Duration {t.CountdownMinutes}m",
-            () => t.CountdownMinutes = Math.Max(1, t.CountdownMinutes - 1), () => t.CountdownMinutes = Math.Min(180, t.CountdownMinutes + 1));
+            () => t.CountdownMinutes = Math.Max(1, t.CountdownMinutes - 1), () => t.CountdownMinutes = Math.Min(180, t.CountdownMinutes + 1), _host.Timers.CountdownSettingsChanged);
     }
 
     private void BuildStopwatchControls()
@@ -119,7 +119,7 @@ public partial class TimersPage : UserControl
     }
 
     /// <summary>A pill with minus and plus buttons around a label. Each change is saved and restarts the timers that depend on it.</summary>
-    private UIElement Stepper(Func<string> label, Action decrease, Action increase)
+    private UIElement Stepper(Func<string> label, Action decrease, Action increase, Action applied)
     {
         var text = new TextBlock { Text = label(), Style = (Style)FindResource("Style.Text"), FontSize = 12, FontWeight = FontWeights.Medium, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
         Button Side(string icon, Action action)
@@ -129,7 +129,7 @@ public partial class TimersPage : UserControl
                 Style = (Style)FindResource("Style.RoundButton"), Width = 26, Height = 26,
                 Content = new TextBlock { Text = Icons.Glyph(icon), Style = (Style)FindResource("Style.Icon"), FontSize = 13 },
             };
-            b.Click += (_, _) => { action(); _host.Timers.SettingsChanged(); foreach (var r in _stepperRefreshers) r(); Render(); };
+            b.Click += (_, _) => { action(); applied(); foreach (var r in _stepperRefreshers) r(); Render(); };
             return b;
         }
         var grid = new Grid();

@@ -90,14 +90,21 @@ public sealed class TimersService
         if (Pomodoro is not null) Pomodoro.CompletedToday = 0;
     }
 
-    /// <summary>Call after changing <see cref="Core.Settings.TimerSettings"/>: saves, restarts the Pomodoro and rebuilds the countdown.</summary>
-    public void SettingsChanged()
+    /// <summary>Call after changing a Pomodoro length or the cycle count: saves and restarts only the Pomodoro.</summary>
+    public void PomodoroSettingsChanged()
     {
         _host.Save();
         var completed = Pomodoro.CompletedToday;
         Pomodoro.PhaseChanged -= OnPhaseChanged;
         Pomodoro = NewPomodoro();
         Pomodoro.CompletedToday = completed;
+        Changed?.Invoke();
+    }
+
+    /// <summary>Call after changing the countdown duration: saves and rebuilds only the countdown.</summary>
+    public void CountdownSettingsChanged()
+    {
+        _host.Save();
         Countdown = new CountdownTimer(TimeSpan.FromMinutes(_host.Settings.Timers.CountdownMinutes));
         Changed?.Invoke();
     }

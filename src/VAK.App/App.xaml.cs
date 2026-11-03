@@ -16,6 +16,11 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        DispatcherUnhandledException += (_, args) =>
+        {
+            LogError(args.Exception);
+            args.Handled = true; // a tray app that runs all day should survive a bad click or tick
+        };
         _singleInstance = new Mutex(true, "VAK.SingleInstance", out var first);
         if (!first) { Shutdown(); return; }
 
@@ -49,6 +54,17 @@ public partial class App : Application
         host.TryApplyHotkey = hk => _hotkey.Register(hk);
         if (!_hotkey.Register(settings.Hotkey))
             _tray.ShowNotice("VAK", $"The hotkey {settings.Hotkey} is already in use. Hover the top of the screen instead, or change it in Settings.");
+    }
+
+    private static void LogError(Exception ex)
+    {
+        try
+        {
+            var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VAK");
+            Directory.CreateDirectory(dir);
+            File.AppendAllText(Path.Combine(dir, "error.log"), $"{DateTime.Now:O}\n{ex}\n\n");
+        }
+        catch { /* logging must never throw */ }
     }
 
     protected override void OnExit(ExitEventArgs e)

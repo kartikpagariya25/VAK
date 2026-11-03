@@ -17,8 +17,7 @@ public class SettingsStore
             var text = File.ReadAllText(_path);
             var loaded = JsonSerializer.Deserialize<AppSettings>(text, Options);
             if (loaded is null) throw new JsonException("empty settings");
-            if (loaded.HomeSlots is not { Length: 6 }) loaded.HomeSlots = new string?[6];
-            return loaded;
+            return Normalize(loaded);
         }
         catch (Exception e) when (e is JsonException or IOException)
         {
@@ -27,11 +26,28 @@ public class SettingsStore
         }
     }
 
+    /// <summary>An explicit null in the file (for example {"Dock":null}) deserializes without error; replace each with its default.</summary>
+    private static AppSettings Normalize(AppSettings loaded)
+    {
+        var defaults = new AppSettings();
+        if (loaded.HomeSlots is not { Length: 6 }) loaded.HomeSlots = defaults.HomeSlots;
+        if (loaded.Dock is null) loaded.Dock = defaults.Dock;
+        if (loaded.Clock is null) loaded.Clock = defaults.Clock;
+        if (loaded.Timers is null) loaded.Timers = defaults.Timers;
+        if (loaded.WorldClocks is null) loaded.WorldClocks = defaults.WorldClocks;
+        return loaded;
+    }
+
+    /// <summary>Saves atomically. A locked file or a denied folder is swallowed: losing one save must never crash the app.</summary>
     public void Save(AppSettings settings)
     {
-        Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
-        var temp = _path + ".tmp";
-        File.WriteAllText(temp, JsonSerializer.Serialize(settings, Options));
-        File.Move(temp, _path, true);
+        try
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
+            var temp = _path + ".tmp";
+            File.WriteAllText(temp, JsonSerializer.Serialize(settings, Options));
+            File.Move(temp, _path, true);
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
     }
 }

@@ -13,6 +13,10 @@ public sealed class HoverWatcher : IDisposable
     private readonly Action _expand;
     private readonly Action _collapse;
     private DateTime? _outsideSince;
+    private DateTime? _insideTriggerSince;
+
+    /// <summary>The cursor must rest on the notch this long before it expands, so passing over the top edge does nothing.</summary>
+    public TimeSpan ExpandDelay { get; set; } = TimeSpan.FromMilliseconds(120);
     private DateTime _expandedAt = DateTime.MinValue;
     private bool _enteredPanel;
 
@@ -40,10 +44,15 @@ public sealed class HoverWatcher : IDisposable
         if (!Enabled || !NativeMethods.GetCursorPos(out var p)) return;
         var cursor = new Point(p.X, p.Y);
         var (trigger, panel) = _regions();
+        // A menu, popup or slider drag holds the mouse capture; never collapse (or expand) underneath it.
+        if (System.Windows.Input.Mouse.Captured is not null) { _outsideSince = null; return; }
+
         if (!_isExpanded())
         {
             _outsideSince = null;
-            if (trigger.Contains(cursor)) _expand();
+            if (!trigger.Contains(cursor)) { _insideTriggerSince = null; return; }
+            _insideTriggerSince ??= DateTime.UtcNow;
+            if (DateTime.UtcNow - _insideTriggerSince >= ExpandDelay) { _insideTriggerSince = null; _expand(); }
             return;
         }
         if (KeepOpen || panel.Contains(cursor)) { _enteredPanel = true; _outsideSince = null; return; }

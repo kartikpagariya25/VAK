@@ -108,7 +108,8 @@ public partial class ShellWindow : Window
         var origin = PointToScreen(new Point(0, 0)); // physical px of the window's top-left
         var centerX = origin.X + Width * s / 2;
 
-        var trigger = new Rect(centerX - (CollapsedWidth / 2 + 40) * s, origin.Y - 5, (CollapsedWidth + 80) * s, 90 * s);
+        // The notch itself plus a small margin, not a wide strip: reaching for a title bar or tab near the top must not pop the panel.
+        var trigger = new Rect(centerX - (CollapsedWidth / 2 + 8) * s, origin.Y - 5, (CollapsedWidth + 16) * s, (CollapsedHeight + 8) * s);
         var panel = new Rect(centerX - (ExpandedWidth / 2 + 6) * s, origin.Y, (ExpandedWidth + 12) * s, (ExpandedHeight + 6) * s);
         return (trigger, panel);
     }
