@@ -19,9 +19,13 @@ public sealed class HoverWatcher : IDisposable
     public TimeSpan ExpandDelay { get; set; } = TimeSpan.FromMilliseconds(120);
     private DateTime _expandedAt = DateTime.MinValue;
     private bool _enteredPanel;
+    private bool _wasDown;
 
     public TimeSpan CollapseDelay { get; set; } = TimeSpan.FromMilliseconds(250);
     public bool Enabled { get; set; } = true;
+
+    /// <summary>When true the notch opens on a click instead of a hover.</summary>
+    public bool OpenOnClick { get; set; }
 
     /// <summary>When true the panel never auto-collapses (the header pin button).</summary>
     public bool KeepOpen { get; set; }
@@ -51,6 +55,13 @@ public sealed class HoverWatcher : IDisposable
         {
             _outsideSince = null;
             if (!trigger.Contains(cursor)) { _insideTriggerSince = null; return; }
+            if (OpenOnClick)
+            {
+                var down = (NativeMethods.GetAsyncKeyState(0x01) & 0x8000) != 0;
+                if (down && !_wasDown) _expand();
+                _wasDown = down;
+                return;
+            }
             _insideTriggerSince ??= DateTime.UtcNow;
             if (DateTime.UtcNow - _insideTriggerSince >= ExpandDelay) { _insideTriggerSince = null; _expand(); }
             return;

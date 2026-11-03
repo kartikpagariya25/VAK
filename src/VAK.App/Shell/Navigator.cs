@@ -4,7 +4,6 @@ namespace VAK.App.Shell;
 public sealed class Navigator
 {
     public const string Home = "home";
-    public const string Settings = "settings";
 
     public string CurrentId { get; private set; } = Home;
     public event Action<string>? Navigated;

@@ -28,13 +28,15 @@ public partial class ShellContent : UserControl
         Header.PinToggled += pinned => PinToggled?.Invoke(pinned);
         Header.EditToggled += editing => { if (Page.Content is Pages.HomePage home) home.Editing = editing; };
         UndoButton.Click += (_, _) => { if (Page.Content is Pages.HomePage home) home.Undo(); };
-        Header.SettingsClicked += () => _host.Nav.GoTo(Navigator.Settings);
+        Header.SettingsClicked += () => _host.OpenSettings?.Invoke(null);
 
         Dock.Selected += id => { CloseAddDock(); _host.Nav.GoTo(id); };
         Dock.AddClicked += ToggleAddDock;
         AddDock.Bind(host, () => { _host.Save(); RebuildDock(); });
 
         _host.Nav.Navigated += _ => ShowPage();
+        _host.ThemeChanged += () => Dispatcher.Invoke(() => { RebuildDock(); ShowPage(); });
+        _host.ModulesChanged += () => Dispatcher.Invoke(() => { RebuildDock(); if (_host.Nav.CurrentId == Navigator.Home) ShowPage(); });
         _statusTimer.Tick += (_, _) => Header.SetBattery(_host.Battery.Read());
         _statusTimer.Start();
 
@@ -70,19 +72,10 @@ public partial class ShellContent : UserControl
         var id = _host.Nav.CurrentId;
         string title, subtitle;
         FrameworkElement page;
-        if (id == Navigator.Settings)
-        {
-            (title, subtitle) = ("Settings", "");
-            (title, subtitle) = ("Settings", "Preferences");
-            page = new Pages.SettingsPage(_host);
-        }
-        else
-        {
-            var module = _host.Modules[id];
-            title = module.Info.Title;
-            subtitle = id == Navigator.Home ? ClockFormatter.HeaderDate(DateTimeOffset.Now) : module.Info.Subtitle;
-            page = module.CreatePage();
-        }
+        var module = _host.Modules[id];
+        title = module.Info.Title;
+        subtitle = id == Navigator.Home ? ClockFormatter.HeaderDate(DateTimeOffset.Now) : module.Info.Subtitle;
+        page = module.CreatePage();
         Header.SetPage(title, subtitle);
         Header.SetExtras((page as Widgets.IHeaderExtras)?.CreateHeaderExtras());
         PanelHeightRequested?.Invoke(page is Widgets.ITallPage tall ? tall.PreferredHeight : 388);
@@ -93,6 +86,7 @@ public partial class ShellContent : UserControl
         Dock.SetActive(id);
 
         Page.Content = page;
-        Page.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(120)));
+        if (_host.Settings.Notch.TabAnimations) Page.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(120)));
+        else { Page.BeginAnimation(OpacityProperty, null); Page.Opacity = 1; }
     }
 }

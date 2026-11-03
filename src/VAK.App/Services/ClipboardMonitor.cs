@@ -24,6 +24,12 @@ public sealed class ClipboardMonitor : IDisposable
     /// <summary>Raised after something new was recorded.</summary>
     public event Action? Captured;
 
+    /// <summary>Like <see cref="Captured"/> but says what was copied, for the "copied" live activity on the notch.</summary>
+    public event Action<bool, string>? CapturedItem;
+
+    /// <summary>Returns false while the user has clipboard history switched off in Privacy.</summary>
+    public Func<bool>? Enabled { get; set; }
+
     public ClipboardMonitor(ClipboardHistory history, string dataDir)
     {
         _history = history;
@@ -46,7 +52,7 @@ public sealed class ClipboardMonitor : IDisposable
 
     private void Capture()
     {
-        if (DateTime.UtcNow < _ignoreUntil) return;
+        if (DateTime.UtcNow < _ignoreUntil || Enabled?.Invoke() == false) return;
         for (var attempt = 0; attempt < 3; attempt++)
         {
             try
@@ -54,7 +60,10 @@ public sealed class ClipboardMonitor : IDisposable
                 if (IsPrivate()) return;
                 if (Clipboard.ContainsText())
                 {
-                    if (_history.AddText(Clipboard.GetText()) is not null) Captured?.Invoke();
+                    {
+                        var text = Clipboard.GetText();
+                        if (_history.AddText(text) is not null) { Captured?.Invoke(); CapturedItem?.Invoke(false, text); }
+                    }
                 }
                 else if (Clipboard.ContainsImage() && Clipboard.GetImage() is { } image) SaveImage(image);
                 return;
@@ -92,7 +101,7 @@ public sealed class ClipboardMonitor : IDisposable
             encoder.Frames.Add(BitmapFrame.Create(image));
             using (var stream = File.Create(ImagePath(file))) encoder.Save(stream);
             _history.AddImage(file, image.PixelWidth, image.PixelHeight);
-            Captured?.Invoke();
+            Captured?.Invoke(); CapturedItem?.Invoke(true, "");
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
     }

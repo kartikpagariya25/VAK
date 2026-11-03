@@ -40,12 +40,12 @@
                 </Grid>
 
                 <StackPanel Grid.Row="2">
-                    <Rectangle Height="1" Fill="{StaticResource Brush.Divider}" Margin="0,0,0,8"/>
+                    <Rectangle Height="1" Fill="{DynamicResource Brush.Divider}" Margin="0,0,0,8"/>
                     <Grid Margin="0,0,0,8">
                         <TextBlock Style="{StaticResource Style.TextDim}" Text="Time format" VerticalAlignment="Center"/>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                             <TextBlock x:Name="FormatText" Style="{StaticResource Style.Text}" FontWeight="Medium" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="FormatChange" Style="{StaticResource Style.Text}" Foreground="{StaticResource Brush.TextDim}"
+                            <TextBlock x:Name="FormatChange" Style="{StaticResource Style.Text}" Foreground="{DynamicResource Brush.TextDim}"
                                        Text="Change" Margin="14,0,0,0" Cursor="Hand" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Grid>
@@ -80,7 +80,7 @@
                 </Grid.RowDefinitions>
                 <Grid>
                     <StackPanel x:Name="WorldTitle" Orientation="Horizontal"/>
-                    <TextBlock x:Name="AddCity" Style="{StaticResource Style.Text}" Foreground="{StaticResource Brush.Accent}"
+                    <TextBlock x:Name="AddCity" Style="{StaticResource Style.Text}" Foreground="{DynamicResource Brush.Accent}"
                                FontSize="12" Text="+ Add city" HorizontalAlignment="Right" Cursor="Hand"/>
                 </Grid>
                 <ScrollViewer Grid.Row="1" Margin="0,8,0,0" VerticalScrollBarVisibility="Hidden">

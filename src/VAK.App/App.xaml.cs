@@ -37,7 +37,16 @@ public partial class App : Application
 
         host.ClipboardMonitor = _clipboard = new ClipboardMonitor(host.Clipboard, host.DataDir);
         host.ScreenTimeTracker = _screenTime = new ScreenTimeTracker(host.ScreenTime);
+        _clipboard.Enabled = () => settings.Privacy.KeepClipboardHistory;
+        _screenTime.Enabled = () => settings.Privacy.TrackScreenTime;
+        host.NowPlaying.Enabled = () => settings.Live.NowPlaying;
+        host.NowPlaying.AllowBrowser = () => settings.Live.BrowserMedia;
+        host.NowPlaying.Start();
+        host.SettingsApplied += host.NowPlaying.Reevaluate;
+        host.OpenSettings = OpenSettings;
         _shell = new ShellWindow(host);
+        host.LiveActivities = new LiveActivities(host);
+        host.LiveActivities.Start(_clipboard);
         var leftArg = Array.IndexOf(e.Args, "--left");
         if (leftArg >= 0 && leftArg + 1 < e.Args.Length && double.TryParse(e.Args[leftArg + 1], out var left))
             _shell.LeftOverride = left;
@@ -47,6 +56,7 @@ public partial class App : Application
         _tray = new TrayService(settings.StartWithWindows);
         _tray.ShowHideRequested += () => _shell.Toggle();
         _tray.QuitRequested += Shutdown;
+        _tray.SettingsRequested += () => OpenSettings(null);
         _tray.StartWithWindowsChanged += host.SetStartWithWindows;
         host.StartWithWindowsChanged += _tray.SetStartWithWindows;
 
@@ -54,6 +64,7 @@ public partial class App : Application
         {
             System.Media.SystemSounds.Asterisk.Play();
             _tray.ShowNotice("VAK", message);
+            host.LiveActivities.Flash(LiveKind.TimerDone, message, "#FF9F0A");
         };
 
         // Drop is only allowed while the network is private. This watches for the network changing (a laptop moving to a cafe),
@@ -78,17 +89,37 @@ public partial class App : Application
             var lead = o.Event.ReminderMinutes;
             var when = lead <= 0 ? "starting now" : lead >= 60 ? "in 1 hour" : $"in {lead} min";
             var text = $"{o.Event.Title} · {when}";
+            if (!LiveActivityPolicy.Allows(settings.Live, LiveKind.CalendarAlert)) return;
             System.Media.SystemSounds.Asterisk.Play();
-            _tray.ShowNotice("Calendar", text);
+            if (LiveActivityPolicy.AlsoWindowsNotice(settings.Live)) _tray.ShowNotice("Calendar", text);
             if (Core.Message.BannerSpec.TryCreate(text, Core.Message.BannerAnimation.Slide, 1, o.Event.Color, Core.Message.BannerFinish.Solid, 10, false) is { } banner)
                 host.FlashBanner(banner);
         };
+
+        var settingsArg = Array.IndexOf(e.Args, "--settings");
+        if (settingsArg >= 0) OpenSettings(settingsArg + 1 < e.Args.Length && !e.Args[settingsArg + 1].StartsWith("--") ? e.Args[settingsArg + 1] : null);
 
         _hotkey = new HotkeyService(_shell);
         _hotkey.Pressed += () => _shell.Toggle();
         host.TryApplyHotkey = hk => _hotkey.Register(hk);
         if (!_hotkey.Register(settings.Hotkey))
             _tray.ShowNotice("VAK", $"The hotkey {settings.Hotkey} is already in use. Hover the top of the screen instead, or change it in Settings.");
+    }
+
+    private Settings.SettingsWindow? _settingsWindow;
+
+    private void OpenSettings(string? section)
+    {
+        if (_host is null) return;
+        if (_settingsWindow is null)
+        {
+            _settingsWindow = new Settings.SettingsWindow(_host);
+            _settingsWindow.Closed += (_, _) => _settingsWindow = null;
+            _settingsWindow.Show();
+        }
+        if (section is not null) _settingsWindow.Go(section);
+        if (_settingsWindow.WindowState == WindowState.Minimized) _settingsWindow.WindowState = WindowState.Normal;
+        _settingsWindow.Activate();
     }
 
     private static void LogError(Exception ex)

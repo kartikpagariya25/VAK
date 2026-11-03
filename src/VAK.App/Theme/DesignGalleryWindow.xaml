@@ -1,7 +1,7 @@
 <Window x:Class="VAK.App.Theme.DesignGalleryWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="VAK design gallery" Width="860" Height="520" Background="{StaticResource Brush.Panel}"
+        Title="VAK design gallery" Width="860" Height="520" Background="{DynamicResource Brush.Panel}"
         WindowStartupLocation="CenterScreen">
     <StackPanel Margin="24">
         <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
@@ -24,7 +24,7 @@
             <Button Style="{StaticResource Style.RoundButton}" Margin="0,0,8,0">
                 <TextBlock Style="{StaticResource Style.Icon}" x:Name="SampleIcon"/>
             </Button>
-            <Border Style="{StaticResource Style.Pill}" Width="180" Height="36" BorderBrush="{StaticResource Brush.Control}" BorderThickness="1"/>
+            <Border Style="{StaticResource Style.Pill}" Width="180" Height="36" BorderBrush="{DynamicResource Brush.Control}" BorderThickness="1"/>
         </StackPanel>
     </StackPanel>
 </Window>

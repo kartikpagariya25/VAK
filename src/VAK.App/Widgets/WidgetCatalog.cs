@@ -25,6 +25,9 @@ public static class WidgetCatalog
     private static IEnumerable<WidgetModule> BatchTwo(AppHost host) => new[]
     {
         new WidgetModule(
+            new WidgetInfo("nowplaying", "Now Playing", "Music and media", "play", new[] { "music", "spotify", "song", "media", "player", "pause", "next" }, true),
+            () => new Cards.NowPlayingCard(host), () => new Cards.NowPlayingCard(host, true), "What is playing, with play, pause and skip"),
+        new WidgetModule(
             new WidgetInfo("calendar", "Calendar", "Plan your days", "calendar", new[] { "events", "schedule", "reminder", "agenda", "date", "month", "appointment" }, true),
             () => new Cards.CalendarCard(host), () => new Pages.CalendarPage(host), "Events with repeats and reminders"),
         new WidgetModule(
