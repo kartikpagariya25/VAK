@@ -25,6 +25,9 @@ public static class WidgetCatalog
     private static IEnumerable<WidgetModule> BatchTwo(AppHost host) => new[]
     {
         new WidgetModule(
+            new WidgetInfo("clipboard", "Clipboard", "History", "clipboard", new[] { "copy", "paste", "history", "text", "images" }, true),
+            () => new Cards.ClipboardCard(host), () => new Pages.ClipboardPage(host), "Everything you copied, one click away"),
+        new WidgetModule(
             new WidgetInfo("notes", "Notes", "", "note", new[] { "note", "write", "memo", "text" }, true),
             () => new Cards.NotesCard(host), () => new Pages.NotesPage(host), "Quick notes that save as you type"),
         new WidgetModule(

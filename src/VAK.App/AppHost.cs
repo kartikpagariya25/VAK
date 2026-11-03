@@ -50,6 +50,10 @@ public sealed class AppHost
     public WeatherService Weather { get; }
     public Core.Notes.NotesRepository Notes { get; }
     public Core.Links.LinksRepository Links { get; }
+    public Core.Clipboard.ClipboardHistory Clipboard { get; }
+
+    /// <summary>Started by the app shell once the UI is up; null until then.</summary>
+    public ClipboardMonitor? ClipboardMonitor { get; set; }
 
     public AppHost(string settingsPath)
     {
@@ -58,6 +62,7 @@ public sealed class AppHost
         Weather = new WeatherService(this);
         Notes = new Core.Notes.NotesRepository(System.IO.Path.Combine(DataDir, "notes.json"), () => DateTime.Now);
         Links = new Core.Links.LinksRepository(System.IO.Path.Combine(DataDir, "links.json"));
+        Clipboard = new Core.Clipboard.ClipboardHistory(System.IO.Path.Combine(DataDir, "clipboard.json"), () => DateTime.Now);
         Monitor = new SystemMonitor(this);
         _store = new SettingsStore(settingsPath);
         Settings = _store.Load();

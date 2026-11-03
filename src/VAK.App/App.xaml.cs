@@ -1,5 +1,6 @@
 using System.IO;
 using System.Windows;
+using VAK.App.Services;
 using VAK.App.Shell;
 using VAK.Core.Settings;
 using VAK.Core.Sys;
@@ -12,6 +13,7 @@ public partial class App : Application
     private ShellWindow? _shell;
     private HotkeyService? _hotkey;
     private TrayService? _tray;
+    private ClipboardMonitor? _clipboard;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -30,6 +32,7 @@ public partial class App : Application
         var host = new AppHost(path);
         var settings = host.Settings;
 
+        host.ClipboardMonitor = _clipboard = new ClipboardMonitor(host.Clipboard, host.DataDir);
         _shell = new ShellWindow(host);
         var leftArg = Array.IndexOf(e.Args, "--left");
         if (leftArg >= 0 && leftArg + 1 < e.Args.Length && double.TryParse(e.Args[leftArg + 1], out var left))
@@ -70,6 +73,7 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs e)
     {
         _hotkey?.Dispose();
+        _clipboard?.Dispose();
         _tray?.Dispose();
         _singleInstance?.Dispose();
         base.OnExit(e);
