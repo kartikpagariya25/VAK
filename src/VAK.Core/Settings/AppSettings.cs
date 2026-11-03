@@ -15,6 +15,7 @@ public class AppSettings
     public TimerSettings Timers { get; set; } = new();
     public WeatherSettings Weather { get; set; } = new();
     public MessageSettings Message { get; set; } = new();
+    public ConverterSettings Converter { get; set; } = new();
     public List<WorldClockEntry> WorldClocks { get; set; } = new();
     public bool WorldClocksInitialized { get; set; }
     public int WaterToday { get; set; }
@@ -40,6 +41,12 @@ public class TimerSettings
     public int Cycles { get; set; } = 4;
     public bool AutoStartNext { get; set; } = true;
     public int CountdownMinutes { get; set; } = 15;
+}
+
+public class ConverterSettings
+{
+    public int Quality { get; set; } = 90;
+    public int MaxSide { get; set; }
 }
 
 public class MessageSettings

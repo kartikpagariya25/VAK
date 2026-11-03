@@ -59,6 +59,7 @@ public sealed class AppHost
     public Core.Clipboard.ClipboardHistory Clipboard { get; }
     public Core.ScreenTime.ScreenTimeLog ScreenTime { get; }
     public Core.Shelf.ShelfStore Shelf { get; }
+    public ConverterService Converter { get; }
     public Core.Drop.DropServer Drop { get; } = new(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "VAK Drop"));
     public ScreenTimeTracker? ScreenTimeTracker { get; set; }
 
@@ -90,6 +91,7 @@ public sealed class AppHost
             Settings.WorldClocksInitialized = true;
         }
         Timers = new TimersService(this);
+        Converter = new ConverterService(this);
         foreach (var module in WidgetCatalog.Build(this))
         {
             Registry.Register(module.Info);

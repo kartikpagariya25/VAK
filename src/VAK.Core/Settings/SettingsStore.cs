@@ -36,6 +36,7 @@ public class SettingsStore
         if (loaded.Timers is null) loaded.Timers = defaults.Timers;
         if (loaded.Weather is null) loaded.Weather = defaults.Weather;
         if (loaded.Message is null) loaded.Message = defaults.Message;
+        if (loaded.Converter is null) loaded.Converter = defaults.Converter;
         if (loaded.WorldClocks is null) loaded.WorldClocks = defaults.WorldClocks;
         return loaded;
     }

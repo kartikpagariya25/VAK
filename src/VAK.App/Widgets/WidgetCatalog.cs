@@ -25,6 +25,9 @@ public static class WidgetCatalog
     private static IEnumerable<WidgetModule> BatchTwo(AppHost host) => new[]
     {
         new WidgetModule(
+            new WidgetInfo("converter", "Converter", "File conversion", "swap", new[] { "convert", "image", "pdf", "mp3", "mp4", "zip", "format", "ffmpeg" }, false),
+            () => Placeholder("Converter"), () => new Pages.ConverterPage(host), "Convert images, documents, audio, video and zip"),
+        new WidgetModule(
             new WidgetInfo("drop", "VAK Drop", "", "share", new[] { "share", "transfer", "phone", "send", "wifi", "qr", "airdrop" }, false),
             () => Placeholder("Drop"), () => new Pages.DropPage(host), "Send files to and from phones on your network"),
         new WidgetModule(
