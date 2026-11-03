@@ -14,50 +14,56 @@
 
     <div class="expanded-view">
       <header class="island-header">
-        <span id="dateLabel"></span>
-        <span id="timeLabel"></span>
-        <button class="more-btn">&#8942;</button>
+        <div class="brand">
+          <span class="brand-badge">&#9679;&#9679;</span>
+          <span class="brand-title" id="pageTitle">Home</span>
+          <span class="brand-subtitle" id="pageSubtitle"></span>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" id="settingsBtn" title="Settings">&#9881;</button>
+          <button class="icon-btn" id="closeBtn" title="Collapse">&#10005;</button>
+        </div>
       </header>
 
       <main class="card-grid" id="cardGrid">
         <section class="card" data-module="chat-claude">
-          <div class="card-icon">&#128172;</div>
-          <div>
-            <div class="card-label">Claude</div>
-            <div class="card-body">Chat</div>
+          <div class="card-top">
+            <span class="card-icon">&#128172;</span>
+            <span class="card-label">CLAUDE</span>
           </div>
+          <div class="card-body">Chat</div>
         </section>
         <section class="card" data-module="chat-gpt">
-          <div class="card-icon">&#10024;</div>
-          <div>
-            <div class="card-label">ChatGPT</div>
-            <div class="card-body">Chat</div>
+          <div class="card-top">
+            <span class="card-icon">&#10024;</span>
+            <span class="card-label">CHATGPT</span>
           </div>
+          <div class="card-body">Chat</div>
         </section>
         <section class="card" data-module="fileshelf">
-          <div class="card-icon">&#128194;</div>
-          <div>
-            <div class="card-label">File Shelf</div>
-            <div class="card-body" id="shelfCount">Empty</div>
+          <div class="card-top">
+            <span class="card-icon">&#128194;</span>
+            <span class="card-label">FILE SHELF</span>
           </div>
+          <div class="card-body" id="shelfCount">Empty</div>
         </section>
         <section class="card" data-module="converter">
-          <div class="card-icon">&#128260;</div>
-          <div>
-            <div class="card-label">Converter</div>
-            <div class="card-body">Drop a file</div>
+          <div class="card-top">
+            <span class="card-icon">&#128260;</span>
+            <span class="card-label">CONVERTER</span>
           </div>
+          <div class="card-body">Drop a file</div>
         </section>
       </main>
 
       <div class="panel" id="panel" hidden></div>
 
       <nav class="dock">
-        <button data-module="home" class="active">Home</button>
-        <button data-module="chat-claude">Claude</button>
-        <button data-module="chat-gpt">GPT</button>
-        <button data-module="fileshelf">Files</button>
-        <button data-module="converter">Convert</button>
+        <button data-module="home" class="active" title="Home">&#8962;</button>
+        <button data-module="chat-claude" title="Claude">&#128172;</button>
+        <button data-module="chat-gpt" title="ChatGPT">&#10024;</button>
+        <button data-module="fileshelf" title="File Shelf">&#128194;</button>
+        <button data-module="converter" title="Converter">&#128260;</button>
       </nav>
     </div>
   </div>

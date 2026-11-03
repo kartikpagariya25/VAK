@@ -2,6 +2,16 @@ const island = document.getElementById('island');
 const panel = document.getElementById('panel');
 const cardGrid = document.getElementById('cardGrid');
 const dock = document.querySelector('.dock');
+const pageTitle = document.getElementById('pageTitle');
+const pageSubtitle = document.getElementById('pageSubtitle');
+
+const MODULE_META = {
+  home: { title: 'Home', subtitle: 'Your widgets at a glance' },
+  'chat-claude': { title: 'Claude', subtitle: 'Chat' },
+  'chat-gpt': { title: 'ChatGPT', subtitle: 'Chat' },
+  fileshelf: { title: 'File Shelf', subtitle: 'Drag files in, drag them out anywhere' },
+  converter: { title: 'Converter', subtitle: 'Images, PDFs, ZIP' },
+};
 
 window.isla.onStateChange((state) => {
   island.classList.toggle('collapsed', state === 'collapsed');
@@ -10,6 +20,10 @@ window.isla.onStateChange((state) => {
 
 function showModule(name) {
   dock.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b.dataset.module === name));
+  const meta = MODULE_META[name] || MODULE_META.home;
+  pageTitle.textContent = meta.title;
+  pageSubtitle.textContent = meta.subtitle;
+
   if (name === 'home') {
     panel.hidden = true;
     panel.innerHTML = '';
@@ -24,6 +38,9 @@ function showModule(name) {
 document.querySelectorAll('.card, .dock button').forEach((el) => {
   el.addEventListener('click', () => showModule(el.dataset.module));
 });
+
+document.getElementById('closeBtn').addEventListener('click', () => window.isla.forceCollapse());
+document.getElementById('settingsBtn').addEventListener('click', () => showModule('home'));
 
 // Adaptive accent color from the current wallpaper.
 async function applyWallpaperTheme() {

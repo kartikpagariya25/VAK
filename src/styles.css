@@ -1,8 +1,11 @@
 :root {
-  --accent: 124, 140, 255;
-  --text: rgba(255, 255, 255, 0.95);
-  --text-dim: rgba(255, 255, 255, 0.52);
-  --radius: 24px;
+  --accent: 51, 153, 255;
+  --bg: #000000;
+  --card-bg: rgba(255, 255, 255, 0.055);
+  --card-border: rgba(255, 255, 255, 0.07);
+  --text: rgba(255, 255, 255, 0.96);
+  --text-dim: rgba(255, 255, 255, 0.45);
+  --radius: 26px;
 }
 
 * { box-sizing: border-box; }
@@ -22,13 +25,11 @@ html, body {
   position: absolute;
   inset: 0;
   border-radius: var(--radius);
-  background:
-    linear-gradient(180deg, rgba(38, 38, 46, 0.92) 0%, rgba(18, 18, 22, 0.94) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.45),
-    0 2px 8px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    0 20px 48px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
   transition: opacity 200ms ease;
   display: flex;
   flex-direction: column;
@@ -64,7 +65,6 @@ html, body {
   font-weight: 600;
   color: var(--text-dim);
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.3px;
 }
 
 /* ---------- expanded view ---------- */
@@ -72,7 +72,7 @@ html, body {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 16px 16px 12px;
+  padding: 16px 18px 12px;
   animation: fadein 160ms ease;
 }
 @keyframes fadein { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
@@ -81,19 +81,37 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12px;
-  font-weight: 500;
+  margin-bottom: 14px;
+}
+.brand { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+.brand-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 20px;
+  border-radius: 8px;
+  background: rgb(var(--accent));
+  color: #fff;
+  font-size: 7px;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+.brand-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.brand-subtitle { font-size: 12px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.header-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.icon-btn {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
+  border-radius: 50%;
   color: var(--text-dim);
-  margin-bottom: 12px;
-  padding: 0 2px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
 }
-#timeLabel { color: var(--text); font-weight: 700; font-variant-numeric: tabular-nums; }
-.more-btn {
-  background: none; border: none; color: var(--text-dim);
-  font-size: 18px; cursor: pointer; line-height: 1;
-  width: 24px; height: 24px; border-radius: 8px;
-}
-.more-btn:hover { background: rgba(255, 255, 255, 0.08); color: var(--text); }
+.icon-btn:hover { background: rgba(255, 255, 255, 0.14); color: var(--text); }
 
 .card-grid {
   display: grid;
@@ -104,68 +122,63 @@ html, body {
 }
 
 .card {
-  position: relative;
-  border-radius: 16px;
-  padding: 12px;
+  border-radius: 18px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
-  overflow: hidden;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  transition: background 140ms ease, transform 140ms ease;
 }
-.card::before {
-  content: "";
-  position: absolute; inset: 0;
-  opacity: 0.85;
-  z-index: 0;
-}
-.card > * { position: relative; z-index: 1; }
-.card:hover { transform: translateY(-2px); border-color: rgba(255, 255, 255, 0.18); }
+.card:hover { background: rgba(255, 255, 255, 0.09); transform: translateY(-1px); }
 .card:active { transform: translateY(0); }
 
-.card[data-module="chat-claude"]::before { background: linear-gradient(145deg, #2b3a6b, #171c2e); }
-.card[data-module="chat-gpt"]::before { background: linear-gradient(145deg, #1f4d44, #14201d); }
-.card[data-module="fileshelf"]::before { background: linear-gradient(145deg, #5a4420, #241d12); }
-.card[data-module="converter"]::before { background: linear-gradient(145deg, #4a2a63, #1e1428); }
-
-.card-icon { font-size: 18px; line-height: 1; }
-.card-label { font-size: 11px; color: var(--text-dim); margin-top: 8px; }
-.card-body { font-size: 14px; font-weight: 700; margin-top: 2px; }
+.card-top { display: flex; align-items: center; gap: 6px; }
+.card-icon { font-size: 13px; }
+.card-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  color: var(--text-dim);
+}
+.card-body { font-size: 17px; font-weight: 700; margin-top: 10px; }
 
 .panel {
   margin-top: 10px;
   flex: 2;
   min-height: 0;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 18px;
   overflow: hidden;
 }
 .panel webview { width: 100%; height: 100%; }
 
+/* ---------- dock: circular icon buttons ---------- */
 .dock {
   display: flex;
-  gap: 4px;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
 .dock button {
-  flex: 1;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
   background: none;
   border: none;
+  border-radius: 50%;
   color: var(--text-dim);
-  font-size: 11px;
-  font-weight: 500;
-  padding: 7px 4px;
-  border-radius: 10px;
+  font-size: 15px;
   cursor: pointer;
   transition: background 120ms ease, color 120ms ease;
 }
-.dock button:hover { background: rgba(255, 255, 255, 0.07); color: var(--text); }
-.dock button.active { color: rgb(var(--accent)); background: rgba(var(--accent), 0.14); }
+.dock button:hover { background: rgba(255, 255, 255, 0.08); color: var(--text); }
+.dock button.active { color: #000; background: #fff; }
 
 #island.drag-over {
   outline: 2px dashed rgb(var(--accent));
@@ -175,8 +188,8 @@ html, body {
 /* ---------- module internals ---------- */
 .shelf, .converter { height: 100%; display: flex; flex-direction: column; padding: 12px; gap: 10px; }
 .shelf-drop, .conv-drop {
-  border: 1px dashed rgba(255,255,255,0.18);
-  border-radius: 12px;
+  border: 1px dashed rgba(255,255,255,0.16);
+  border-radius: 14px;
   padding: 14px;
   text-align: center;
   font-size: 12px;
@@ -185,7 +198,7 @@ html, body {
 .shelf-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; }
 .shelf-item {
   background: rgba(255,255,255,0.05);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 8px 12px;
   font-size: 12px;
   cursor: grab;
@@ -195,14 +208,15 @@ html, body {
 
 .conv-targets { display: flex; gap: 6px; flex-wrap: wrap; }
 .conv-targets button {
-  background: rgba(var(--accent), 0.16);
-  border: 1px solid rgba(var(--accent), 0.4);
+  background: rgba(var(--accent), 0.18);
+  border: 1px solid rgba(var(--accent), 0.42);
   color: var(--text);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 7px 14px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
+  width: auto; height: auto;
 }
-.conv-targets button:hover { background: rgba(var(--accent), 0.28); }
+.conv-targets button:hover { background: rgba(var(--accent), 0.3); }
 .conv-status { font-size: 12px; color: var(--text-dim); }
