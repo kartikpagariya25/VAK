@@ -1,5 +1,8 @@
+bin/
+obj/
+*.user
+.vs/
+.superpowers/
 node_modules/
-dist/
-build/
 *.log
 .DS_Store
