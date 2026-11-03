@@ -10,6 +10,10 @@ node -v
 
 Write-Host "Installing dependencies..." -ForegroundColor Cyan
 npm install
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "npm install failed (see the errors above). Setup did NOT complete." -ForegroundColor Red
+    exit $LASTEXITCODE
+}
 
 Write-Host ""
 Write-Host "Setup complete. Run .\scripts\run.ps1 to start Isla." -ForegroundColor Green
