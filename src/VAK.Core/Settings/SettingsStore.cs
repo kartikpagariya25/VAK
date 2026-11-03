@@ -38,6 +38,10 @@ public class SettingsStore
         if (loaded.Message is null) loaded.Message = defaults.Message;
         if (loaded.Converter is null) loaded.Converter = defaults.Converter;
         if (loaded.Ai is null) loaded.Ai = defaults.Ai;
+        if (loaded.Notch is null) loaded.Notch = defaults.Notch;
+        if (loaded.Appearance is null) loaded.Appearance = defaults.Appearance;
+        if (loaded.Appearance.EdgeLight is null) loaded.Appearance.EdgeLight = defaults.Appearance.EdgeLight;
+        if (loaded.Live is null) loaded.Live = defaults.Live;
         if (loaded.WorldClocks is null) loaded.WorldClocks = defaults.WorldClocks;
         return loaded;
     }
