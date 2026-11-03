@@ -35,11 +35,15 @@ public sealed class ScreenTimeTracker
         _timer.Start();
     }
 
+    /// <summary>Returns false while the user has screen time tracking switched off in Privacy.</summary>
+    public Func<bool>? Enabled { get; set; }
+
     private void Tick()
     {
         var now = DateTime.UtcNow;
         var elapsed = Math.Clamp((now - _last).TotalSeconds, 0, 2.5); // a sleep gap must not be credited as usage
         _last = now;
+        if (Enabled?.Invoke() == false) return;
 
         if (IdleTime() < IdleLimit && ForegroundApp() is { } app)
         {

@@ -2,30 +2,43 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:c="clr-namespace:VAK.App.Controls"
-        Title="VAK" Width="800" Height="600"
+        Title="VAK" Width="880" Height="620"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         Topmost="True" ShowInTaskbar="False" ResizeMode="NoResize" ShowActivated="False">
     <Grid>
-        <Border x:Name="Island" HorizontalAlignment="Center" VerticalAlignment="Top"
-                Width="200" Height="34" Background="{StaticResource Brush.Panel}"
-                CornerRadius="0,0,18,18" ClipToBounds="True">
-            <Grid>
-                <!-- Collapsed pill: time on the left, battery on the right -->
-                <Grid x:Name="PillView" Margin="16,0">
-                    <TextBlock x:Name="PillTime" Style="{StaticResource Style.Text}" FontWeight="Medium"
-                               VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                    <StackPanel x:Name="PillBattery" Orientation="Horizontal" HorizontalAlignment="Right"
-                                VerticalAlignment="Center" Visibility="Collapsed">
-                        <TextBlock x:Name="PillBatteryIcon" Style="{StaticResource Style.Icon}" FontSize="16"
-                                   Foreground="{StaticResource Brush.Good}" Margin="0,0,5,0"/>
-                        <TextBlock x:Name="PillBatteryText" Style="{StaticResource Style.Text}" FontWeight="Medium"/>
-                    </StackPanel>
+        <Grid x:Name="EffectHost" HorizontalAlignment="Center" VerticalAlignment="Top">
+            <Border x:Name="Island" HorizontalAlignment="Center" VerticalAlignment="Top"
+                    Width="200" Height="34" Background="Black"
+                    CornerRadius="0,0,18,18" ClipToBounds="True">
+                <Grid>
+                    <!-- Collapsed pill: time on the left, battery on the right. The collapsed notch is always black, so its text is always white. -->
+                    <Grid x:Name="PillView" Margin="16,0">
+                        <TextBlock x:Name="PillTime" Style="{StaticResource Style.Text}" Foreground="White" FontWeight="Medium"
+                                   VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <StackPanel x:Name="PillBattery" Orientation="Horizontal" HorizontalAlignment="Right"
+                                    VerticalAlignment="Center" Visibility="Collapsed">
+                            <TextBlock x:Name="PillBatteryIcon" Style="{StaticResource Style.Icon}" FontSize="16"
+                                       Foreground="{DynamicResource Brush.Good}" Margin="0,0,5,0"/>
+                            <TextBlock x:Name="PillBatteryText" Style="{StaticResource Style.Text}" Foreground="White" FontWeight="Medium"/>
+                        </StackPanel>
+                        <StackPanel x:Name="PillTimer" Orientation="Horizontal" HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" Visibility="Collapsed">
+                            <TextBlock x:Name="PillTimerIcon" Style="{StaticResource Style.Icon}" FontSize="15" Foreground="#FF9F0A" Margin="0,0,5,0"/>
+                            <TextBlock x:Name="PillTimerText" Style="{StaticResource Style.Text}" Foreground="White" FontWeight="Medium"/>
+                        </StackPanel>
+                        <c:EqualizerBars x:Name="PillMusic" HorizontalAlignment="Right" VerticalAlignment="Center" Visibility="Collapsed"/>
+                    </Grid>
+                    <!-- Minimal mode: just a small arrow -->
+                    <TextBlock x:Name="MinimalArrow" Style="{StaticResource Style.Icon}" Foreground="White" FontSize="12"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                    <c:BannerView x:Name="BannerLayer" Visibility="Collapsed" IsHitTestVisible="False" Margin="12,0"/>
+                    <!-- Expanded content is laid out at full size so it never reflows during the animation -->
+                    <ContentControl x:Name="PageHost" Width="800" Height="388" HorizontalAlignment="Center"
+                                    VerticalAlignment="Top" Opacity="0" IsHitTestVisible="False"/>
+                    <!-- Edge light: a gradient on a thin outline whose angle turns, so a light runs along the edge -->
+                    <Border x:Name="EdgeLight" IsHitTestVisible="False" BorderThickness="2" CornerRadius="0,0,18,18" Visibility="Collapsed"/>
                 </Grid>
-                <c:BannerView x:Name="BannerLayer" Visibility="Collapsed" IsHitTestVisible="False" Margin="12,0"/>
-                <!-- Expanded content is laid out at full size so it never reflows during the animation -->
-                <ContentControl x:Name="PageHost" Width="800" Height="388" HorizontalAlignment="Center"
-                                VerticalAlignment="Top" Opacity="0" IsHitTestVisible="False"/>
-            </Grid>
-        </Border>
+            </Border>
+        </Grid>
     </Grid>
 </Window>

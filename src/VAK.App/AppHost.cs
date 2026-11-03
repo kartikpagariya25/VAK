@@ -28,12 +28,29 @@ public sealed class AppHost
     /// <summary>Raised when Start with Windows changes from anywhere (Settings page or tray menu).</summary>
     public event Action<bool>? StartWithWindowsChanged;
 
+    /// <summary>Opens the Settings window, optionally on a section ("general", "notch", ...). Set by the app.</summary>
+    public Action<string?>? OpenSettings { get; set; }
+
     /// <summary>Set by the app shell: tries to register a new global hotkey and returns false if another app holds it.</summary>
     public Func<string, bool>? TryApplyHotkey { get; set; }
 
     /// <summary>The Message page asks the notch to show or clear a banner through these.</summary>
     public event Action<Core.Message.BannerSpec>? BannerRequested;
     public event Action? BannerCleared;
+
+    /// <summary>Raised after the Settings window changes something the shell has to re-apply (notch, theme, live activities, dock).</summary>
+    public event Action? SettingsApplied;
+
+    /// <summary>Raised after the theme changed, so windows and pages that fetched brushes in code can rebuild.</summary>
+    public event Action? ThemeChanged;
+    public void RaiseThemeChanged() => ThemeChanged?.Invoke();
+
+    /// <summary>Saves, then tells the shell to re-read the settings.</summary>
+    public void Apply() { Save(); SettingsApplied?.Invoke(); }
+
+    /// <summary>Raised when the dock or Home widgets changed, so the open panel rebuilds them.</summary>
+    public event Action? ModulesChanged;
+    public void RaiseModulesChanged() => ModulesChanged?.Invoke();
     public void FlashBanner(Core.Message.BannerSpec spec) => BannerRequested?.Invoke(spec);
     public void ClearBanner() => BannerCleared?.Invoke();
 
@@ -46,6 +63,9 @@ public sealed class AppHost
         Save();
         StartWithWindowsChanged?.Invoke(enabled);
     }
+
+    public NowPlayingService NowPlaying { get; } = new();
+    public LiveActivities LiveActivities { get; set; } = null!;
 
     public SystemMonitor Monitor { get; }
     public TimersService Timers { get; }

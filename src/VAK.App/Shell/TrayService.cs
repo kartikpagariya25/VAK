@@ -10,6 +10,7 @@ public sealed class TrayService : IDisposable
 
     public event Action? ShowHideRequested;
     public event Action<bool>? StartWithWindowsChanged;
+    public event Action? SettingsRequested;
     public event Action? QuitRequested;
 
     public TrayService(bool startWithWindows)
@@ -19,6 +20,7 @@ public sealed class TrayService : IDisposable
 
         var menu = new ContextMenuStrip();
         menu.Items.Add("Show / Hide", null, (_, _) => ShowHideRequested?.Invoke());
+        menu.Items.Add("Settings…", null, (_, _) => SettingsRequested?.Invoke());
         menu.Items.Add(_startup);
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("Quit VAK", null, (_, _) => QuitRequested?.Invoke());

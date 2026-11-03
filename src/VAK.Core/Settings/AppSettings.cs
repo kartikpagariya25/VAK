@@ -42,6 +42,7 @@ public class AppSettings
     public NotchSettings Notch { get; set; } = new();
     public AppearanceSettings Appearance { get; set; } = new();
     public LiveSettings Live { get; set; } = new();
+    public PrivacySettings Privacy { get; set; } = new();
     public List<WorldClockEntry> WorldClocks { get; set; } = new();
     public bool WorldClocksInitialized { get; set; }
     public int WaterToday { get; set; }
@@ -171,4 +172,10 @@ public class LiveSettings
     public string RemindersWhere { get; set; } = "notch";
     /// <summary>2, 3 or 5.</summary>
     public int EventSeconds { get; set; } = 3;
+}
+
+public class PrivacySettings
+{
+    public bool TrackScreenTime { get; set; } = true;
+    public bool KeepClipboardHistory { get; set; } = true;
 }

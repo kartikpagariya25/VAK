@@ -6,7 +6,7 @@
             <Image Source="{StaticResource Brand.Mark}" Width="30" Height="30"/>
             <TextBlock x:Name="Title" Style="{StaticResource Style.Text}" FontSize="18" FontWeight="SemiBold"
                        Margin="12,0,0,0" VerticalAlignment="Center"/>
-            <Rectangle x:Name="Divider" Width="1" Height="22" Fill="{StaticResource Brush.Divider}" Margin="16,0,16,0"/>
+            <Rectangle x:Name="Divider" Width="1" Height="22" Fill="{DynamicResource Brush.Divider}" Margin="16,0,16,0"/>
             <TextBlock x:Name="Subtitle" Style="{StaticResource Style.TextDim}" FontSize="16" VerticalAlignment="Center"/>
         </StackPanel>
 
@@ -14,8 +14,8 @@
             <ContentControl x:Name="Extras" Margin="0,0,14,0" VerticalAlignment="Center"/>
             <StackPanel x:Name="BatteryChip" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed">
                 <TextBlock x:Name="BatteryText" Style="{StaticResource Style.Text}" FontWeight="Medium" Margin="0,0,6,0"/>
-                <TextBlock x:Name="BatteryIcon" Style="{StaticResource Style.Icon}" FontSize="18" Foreground="{StaticResource Brush.Good}"/>
-                <Rectangle Width="1" Height="22" Fill="{StaticResource Brush.Divider}" Margin="16,0,10,0"/>
+                <TextBlock x:Name="BatteryIcon" Style="{StaticResource Style.Icon}" FontSize="18" Foreground="{DynamicResource Brush.Good}"/>
+                <Rectangle Width="1" Height="22" Fill="{DynamicResource Brush.Divider}" Margin="16,0,10,0"/>
             </StackPanel>
             <Button x:Name="PinButton" Style="{StaticResource Style.RoundButton}" Width="34" Height="34" ToolTip="Keep open">
                 <TextBlock x:Name="PinIcon" Style="{StaticResource Style.Icon}"/>

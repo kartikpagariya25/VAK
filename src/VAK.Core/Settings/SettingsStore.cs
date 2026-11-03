@@ -41,6 +41,7 @@ public class SettingsStore
         if (loaded.Notch is null) loaded.Notch = defaults.Notch;
         if (loaded.Appearance is null) loaded.Appearance = defaults.Appearance;
         if (loaded.Appearance.EdgeLight is null) loaded.Appearance.EdgeLight = defaults.Appearance.EdgeLight;
+        if (loaded.Privacy is null) loaded.Privacy = defaults.Privacy;
         if (loaded.Live is null) loaded.Live = defaults.Live;
         if (loaded.WorldClocks is null) loaded.WorldClocks = defaults.WorldClocks;
         return loaded;

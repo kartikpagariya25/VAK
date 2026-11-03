@@ -13,7 +13,7 @@
         <shell:AddToDockView x:Name="AddDock" Grid.Row="1" Visibility="Collapsed"/>
         <shell:DockView x:Name="Dock" Grid.Row="2"/>
         <Button x:Name="UndoButton" Grid.Row="2" Style="{StaticResource Style.RoundButton}" Width="64" Height="34"
-                HorizontalAlignment="Right" Margin="0,0,20,0" Background="{StaticResource Brush.Control}" Visibility="Collapsed">
+                HorizontalAlignment="Right" Margin="0,0,20,0" Background="{DynamicResource Brush.Control}" Visibility="Collapsed">
             <TextBlock Style="{StaticResource Style.Text}" Text="Undo" FontWeight="Medium"/>
         </Button>
     </Grid>

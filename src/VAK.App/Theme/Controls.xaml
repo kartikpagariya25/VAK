@@ -5,11 +5,11 @@
     <Style x:Key="Style.Text" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource Font.Ui}"/>
         <Setter Property="FontSize" Value="{StaticResource Size.Body}"/>
-        <Setter Property="Foreground" Value="{StaticResource Brush.Text}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Text}"/>
         <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
     </Style>
     <Style x:Key="Style.TextDim" TargetType="TextBlock" BasedOn="{StaticResource Style.Text}">
-        <Setter Property="Foreground" Value="{StaticResource Brush.TextDim}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Brush.TextDim}"/>
     </Style>
     <Style x:Key="Style.Big" TargetType="TextBlock" BasedOn="{StaticResource Style.Text}">
         <Setter Property="FontFamily" Value="{StaticResource Font.Display}"/>
@@ -19,17 +19,17 @@
     <Style x:Key="Style.Icon" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource Font.Icons}"/>
         <Setter Property="FontSize" Value="18"/>
-        <Setter Property="Foreground" Value="{StaticResource Brush.Text}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Text}"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
     <Style x:Key="Style.Card" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource Brush.Card}"/>
+        <Setter Property="Background" Value="{DynamicResource Brush.Card}"/>
         <Setter Property="CornerRadius" Value="{StaticResource Radius.Card}"/>
         <Setter Property="Padding" Value="{StaticResource Space.Card}"/>
     </Style>
     <Style x:Key="Style.Pill" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource Brush.Panel}"/>
+        <Setter Property="Background" Value="{DynamicResource Brush.Panel}"/>
         <Setter Property="CornerRadius" Value="{StaticResource Radius.Pill}"/>
     </Style>
 
@@ -38,7 +38,7 @@
         <Setter Property="Width" Value="37"/>
         <Setter Property="Height" Value="37"/>
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Foreground" Value="{StaticResource Brush.Text}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Text}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Focusable" Value="False"/>
@@ -50,7 +50,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bg" Property="Background" Value="{StaticResource Brush.Control}"/>
+                            <Setter TargetName="Bg" Property="Background" Value="{DynamicResource Brush.Control}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -67,13 +67,13 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Slider">
                     <Grid VerticalAlignment="Center" Height="22">
-                        <Border Height="6" CornerRadius="3" Background="{StaticResource Brush.Control}" VerticalAlignment="Center"/>
+                        <Border Height="6" CornerRadius="3" Background="{DynamicResource Brush.Control}" VerticalAlignment="Center"/>
                         <Track x:Name="PART_Track">
                             <Track.DecreaseRepeatButton>
                                 <RepeatButton Command="Slider.DecreaseLarge" Focusable="False" IsTabStop="False">
                                     <RepeatButton.Template>
                                         <ControlTemplate TargetType="RepeatButton">
-                                            <Border Height="6" CornerRadius="3" Background="{StaticResource Brush.Accent}" VerticalAlignment="Center"/>
+                                            <Border Height="6" CornerRadius="3" Background="{DynamicResource Brush.Accent}" VerticalAlignment="Center"/>
                                         </ControlTemplate>
                                     </RepeatButton.Template>
                                 </RepeatButton>
@@ -113,12 +113,12 @@
             <Setter.Value>
                 <ControlTemplate TargetType="CheckBox">
                     <Grid>
-                        <Border x:Name="Track" CornerRadius="12" Background="{StaticResource Brush.Control}"/>
+                        <Border x:Name="Track" CornerRadius="12" Background="{DynamicResource Brush.Control}"/>
                         <Ellipse x:Name="Thumb" Width="18" Height="18" Fill="White" HorizontalAlignment="Left" Margin="3,0,0,0"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="Track" Property="Background" Value="{StaticResource Brush.Accent}"/>
+                            <Setter TargetName="Track" Property="Background" Value="{DynamicResource Brush.Accent}"/>
                             <Setter TargetName="Thumb" Property="Margin" Value="21,0,0,0"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -135,7 +135,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ContextMenu">
-                    <Border Background="#141416" BorderBrush="{StaticResource Brush.Control}" BorderThickness="1" CornerRadius="12" Padding="4">
+                    <Border Background="#141416" BorderBrush="{DynamicResource Brush.Control}" BorderThickness="1" CornerRadius="12" Padding="4">
                         <ItemsPresenter/>
                     </Border>
                 </ControlTemplate>
@@ -152,7 +152,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsHighlighted" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource Brush.Control}"/>
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Brush.Control}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.5"/>
