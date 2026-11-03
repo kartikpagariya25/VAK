@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -7,6 +7,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>VAK</AssemblyName>
+    <RootNamespace>VAK.App</RootNamespace>
+    <ApplicationIcon>Assets/Brand/vak.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,12 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Using Remove="System.Windows.Forms" />
-    <Using Remove="System.Drawing" />
+    <ProjectReference Include="..\VAK.Core\VAK.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\VAK.Core\VAK.Core.csproj" />
+    <Resource Include="Assets/Fonts/*.ttf" />
+    <Resource Include="Assets/Icons/*.ttf" />
+    <Resource Include="Assets/Brand/*.ico" />
   </ItemGroup>
 
 </Project>
