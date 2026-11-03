@@ -26,32 +26,44 @@
       </header>
 
       <main class="card-grid" id="cardGrid">
+        <section class="card" data-module="clipboard">
+          <div class="card-top"><span class="card-icon">&#128203;</span><span class="card-label">CLIPBOARD</span></div>
+          <div class="card-body">History</div>
+        </section>
+        <section class="card" data-module="timer">
+          <div class="card-top"><span class="card-icon">&#9201;</span><span class="card-label">FOCUS</span></div>
+          <div class="card-body">25:00</div>
+        </section>
+        <section class="card" data-module="weather">
+          <div class="card-top"><span class="card-icon">&#9728;</span><span class="card-label">WEATHER</span></div>
+          <div class="card-body">--&deg;</div>
+        </section>
+        <section class="card" data-module="system">
+          <div class="card-top"><span class="card-icon">&#9881;</span><span class="card-label">SYSTEM</span></div>
+          <div class="card-body">CPU/RAM</div>
+        </section>
+        <section class="card" data-module="worldclock">
+          <div class="card-top"><span class="card-icon">&#127760;</span><span class="card-label">WORLD CLOCK</span></div>
+          <div class="card-body">--:--</div>
+        </section>
+        <section class="card" data-module="units">
+          <div class="card-top"><span class="card-icon">&#128207;</span><span class="card-label">UNITS</span></div>
+          <div class="card-body">Convert</div>
+        </section>
         <section class="card" data-module="chat-claude">
-          <div class="card-top">
-            <span class="card-icon">&#128172;</span>
-            <span class="card-label">CLAUDE</span>
-          </div>
+          <div class="card-top"><span class="card-icon">&#128172;</span><span class="card-label">CLAUDE</span></div>
           <div class="card-body">Chat</div>
         </section>
         <section class="card" data-module="chat-gpt">
-          <div class="card-top">
-            <span class="card-icon">&#10024;</span>
-            <span class="card-label">CHATGPT</span>
-          </div>
+          <div class="card-top"><span class="card-icon">&#10024;</span><span class="card-label">CHATGPT</span></div>
           <div class="card-body">Chat</div>
         </section>
         <section class="card" data-module="fileshelf">
-          <div class="card-top">
-            <span class="card-icon">&#128194;</span>
-            <span class="card-label">FILE SHELF</span>
-          </div>
+          <div class="card-top"><span class="card-icon">&#128194;</span><span class="card-label">FILE SHELF</span></div>
           <div class="card-body" id="shelfCount">Empty</div>
         </section>
         <section class="card" data-module="converter">
-          <div class="card-top">
-            <span class="card-icon">&#128260;</span>
-            <span class="card-label">CONVERTER</span>
-          </div>
+          <div class="card-top"><span class="card-icon">&#128260;</span><span class="card-label">CONVERTER</span></div>
           <div class="card-body">Drop a file</div>
         </section>
       </main>
@@ -60,6 +72,12 @@
 
       <nav class="dock">
         <button data-module="home" class="active" title="Home">&#8962;</button>
+        <button data-module="clipboard" title="Clipboard">&#128203;</button>
+        <button data-module="timer" title="Focus">&#9201;</button>
+        <button data-module="weather" title="Weather">&#9728;</button>
+        <button data-module="system" title="System">&#9881;</button>
+        <button data-module="worldclock" title="World Clock">&#127760;</button>
+        <button data-module="units" title="Units">&#128207;</button>
         <button data-module="chat-claude" title="Claude">&#128172;</button>
         <button data-module="chat-gpt" title="ChatGPT">&#10024;</button>
         <button data-module="fileshelf" title="File Shelf">&#128194;</button>
@@ -73,5 +91,11 @@
   <script src="modules/fileshelf.js"></script>
   <script src="modules/chat.js"></script>
   <script src="modules/converter.js"></script>
+  <script src="modules/clipboard.js"></script>
+  <script src="modules/timer.js"></script>
+  <script src="modules/weather.js"></script>
+  <script src="modules/system.js"></script>
+  <script src="modules/worldclock.js"></script>
+  <script src="modules/units.js"></script>
 </body>
 </html>

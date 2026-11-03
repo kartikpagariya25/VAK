@@ -12,4 +12,14 @@ contextBridge.exposeInMainWorld('isla', {
   shelfDragOut: (name) => ipcRenderer.send('shelf:dragOut', name),
 
   convert: (filePath, target) => ipcRenderer.invoke('convert:run', filePath, target),
+
+  storeGet: (key, fallback) => ipcRenderer.invoke('store:get', key, fallback),
+  storeSet: (key, value) => ipcRenderer.invoke('store:set', key, value),
+
+  clipboardList: () => ipcRenderer.invoke('clipboard:list'),
+  clipboardCopy: (item) => ipcRenderer.invoke('clipboard:copy', item),
+  clipboardClear: () => ipcRenderer.invoke('clipboard:clear'),
+  clipboardImageDir: () => ipcRenderer.invoke('clipboard:imageDir'),
+
+  systemStats: () => ipcRenderer.invoke('system:stats'),
 });

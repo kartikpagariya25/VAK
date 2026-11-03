@@ -4,9 +4,12 @@ const { exec } = require('child_process');
 const fs = require('fs');
 const shelf = require('./shelf');
 const converter = require('./converter');
+const store = require('./store');
+const clipboardHistory = require('./clipboard');
+const systemStats = require('./system');
 
 const COLLAPSED = { width: 180, height: 36 };
-const EXPANDED = { width: 640, height: 420 };
+const EXPANDED = { width: 760, height: 480 };
 const HOVER_ZONE_HEIGHT = 90;
 
 let win = null;
@@ -127,9 +130,20 @@ ipcMain.on('shelf:dragOut', (e, name) => {
 
 ipcMain.handle('convert:run', (_e, filePath, target) => converter.convert(filePath, target));
 
+ipcMain.handle('store:get', (_e, key, fallback) => store.get(key, fallback));
+ipcMain.handle('store:set', (_e, key, value) => store.set(key, value));
+
+ipcMain.handle('clipboard:list', () => clipboardHistory.history());
+ipcMain.handle('clipboard:copy', (_e, item) => clipboardHistory.copyBack(item));
+ipcMain.handle('clipboard:clear', () => clipboardHistory.clear());
+ipcMain.handle('clipboard:imageDir', () => clipboardHistory.imageDir());
+
+ipcMain.handle('system:stats', () => systemStats.stats());
+
 app.whenReady().then(() => {
   createWindow();
   createTray();
+  clipboardHistory.start();
   globalShortcut.register('Control+Alt+Space', () => setExpanded(!expanded));
 });
 
@@ -137,4 +151,5 @@ app.on('window-all-closed', (e) => e.preventDefault());
 app.on('will-quit', () => {
   globalShortcut.unregisterAll();
   clearInterval(pollTimer);
+  clipboardHistory.stop();
 });

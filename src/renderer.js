@@ -7,6 +7,12 @@ const pageSubtitle = document.getElementById('pageSubtitle');
 
 const MODULE_META = {
   home: { title: 'Home', subtitle: 'Your widgets at a glance' },
+  clipboard: { title: 'Clipboard', subtitle: 'Recent copies' },
+  timer: { title: 'Focus', subtitle: 'Pomodoro timer' },
+  weather: { title: 'Weather', subtitle: 'Current conditions' },
+  system: { title: 'System', subtitle: 'CPU, RAM, battery' },
+  worldclock: { title: 'World Clock', subtitle: 'Local and remote times' },
+  units: { title: 'Units', subtitle: 'Quick conversion' },
   'chat-claude': { title: 'Claude', subtitle: 'Chat' },
   'chat-gpt': { title: 'ChatGPT', subtitle: 'Chat' },
   fileshelf: { title: 'File Shelf', subtitle: 'Drag files in, drag them out anywhere' },
