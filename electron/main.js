@@ -31,7 +31,6 @@ function createWindow() {
     frame: false,
     transparent: true,
     backgroundColor: '#00000000',
-    backgroundMaterial: 'acrylic',
     alwaysOnTop: true,
     skipTaskbar: true,
     resizable: false,
