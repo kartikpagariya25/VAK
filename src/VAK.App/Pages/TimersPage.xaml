@@ -1,0 +1,58 @@
+<UserControl x:Class="VAK.App.Pages.TimersPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:VAK.App.Controls">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="212"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="318"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel x:Name="ModeList" Margin="5,4,6,0" VerticalAlignment="Top"/>
+
+        <Grid Grid.Column="1">
+            <c:RingGauge x:Name="Ring" Width="200" Height="200" Thickness="9" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock x:Name="RingTime" Style="{StaticResource Style.Big}" FontSize="44" HorizontalAlignment="Center"/>
+                <TextBlock x:Name="RingLabel" Style="{StaticResource Style.TextDim}" FontSize="13" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Column="2" Margin="8,0,5,0" VerticalAlignment="Center">
+            <!-- Pomodoro -->
+            <StackPanel x:Name="PomodoroPanel">
+                <TextBlock x:Name="PomoTitle" Style="{StaticResource Style.Text}" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                <StackPanel x:Name="Dots" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,6,0,4"/>
+                <TextBlock x:Name="PomoNext" Style="{StaticResource Style.TextDim}" FontSize="12" HorizontalAlignment="Center"/>
+                <StackPanel x:Name="PomoButtons" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,6"/>
+                <UniformGrid x:Name="Steppers" Columns="2"/>
+                <Grid Margin="0,6,0,0">
+                    <TextBlock Style="{StaticResource Style.TextDim}" Text="Auto-start next" VerticalAlignment="Center" Margin="40,0,0,0"/>
+                    <CheckBox x:Name="AutoToggle" Style="{StaticResource Style.Toggle}" HorizontalAlignment="Right" Margin="0,0,40,0"/>
+                </Grid>
+                <TextBlock x:Name="CompletedText" Style="{StaticResource Style.TextDim}" FontSize="12" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+            </StackPanel>
+
+            <!-- Countdown -->
+            <StackPanel x:Name="CountdownPanel" Visibility="Collapsed">
+                <TextBlock Style="{StaticResource Style.Text}" FontSize="16" FontWeight="SemiBold" Text="Countdown" HorizontalAlignment="Center"/>
+                <StackPanel x:Name="CountdownButtons" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,14,0,14"/>
+                <ContentControl x:Name="CountdownStepper" HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Stopwatch -->
+            <StackPanel x:Name="StopwatchPanel" Visibility="Collapsed">
+                <TextBlock Style="{StaticResource Style.Text}" FontSize="16" FontWeight="SemiBold" Text="Stopwatch" HorizontalAlignment="Center"/>
+                <StackPanel x:Name="StopwatchButtons" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,14,0,0"/>
+            </StackPanel>
+
+            <!-- Water -->
+            <StackPanel x:Name="WaterPanel" Visibility="Collapsed">
+                <TextBlock Style="{StaticResource Style.Text}" FontSize="16" FontWeight="SemiBold" Text="Water" HorizontalAlignment="Center"/>
+                <TextBlock x:Name="WaterNote" Style="{StaticResource Style.TextDim}" FontSize="12" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                <StackPanel x:Name="WaterButtons" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,14,0,0"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

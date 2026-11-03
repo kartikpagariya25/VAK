@@ -19,7 +19,7 @@ public static class WidgetCatalog
             () => new Cards.ClockCard(host), () => new Pages.ClockPage(host), "Local time and world clocks"),
         new WidgetModule(
             new WidgetInfo("timers", "Timers", "Focus & intervals", "timers", new[] { "pomodoro", "focus", "stopwatch", "countdown", "water" }, true),
-            () => Placeholder("Timers card"), () => Placeholder("Timers"), "Pomodoro, countdown, stopwatch, water"),
+            () => new Cards.FocusCard(host), () => new Pages.TimersPage(host), "Pomodoro, countdown, stopwatch, water"),
     };
 
     // Replaced by the real cards and pages in the page tasks.

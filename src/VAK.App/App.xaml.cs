@@ -36,6 +36,12 @@ public partial class App : Application
         _tray.ShowHideRequested += () => _shell.Toggle();
         _tray.QuitRequested += Shutdown;
 
+        host.Timers.Notice += message =>
+        {
+            System.Media.SystemSounds.Asterisk.Play();
+            _tray.ShowNotice("VAK", message);
+        };
+
         _hotkey = new HotkeyService(_shell);
         _hotkey.Pressed += () => _shell.Toggle();
         if (!_hotkey.Register(settings.Hotkey))

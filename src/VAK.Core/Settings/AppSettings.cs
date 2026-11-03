@@ -14,6 +14,10 @@ public class AppSettings
     public List<WorldClockEntry> WorldClocks { get; set; } = new();
     public bool WorldClocksInitialized { get; set; }
     public int WaterToday { get; set; }
+    public int PomodoroCompletedToday { get; set; }
+
+    /// <summary>Date (yyyy-MM-dd) the daily counters belong to; they reset when it changes.</summary>
+    public string CountersDate { get; set; } = "";
 }
 
 public class ClockSettings
@@ -31,6 +35,7 @@ public class TimerSettings
     public int LongBreakMinutes { get; set; } = 15;
     public int Cycles { get; set; } = 4;
     public bool AutoStartNext { get; set; } = true;
+    public int CountdownMinutes { get; set; } = 15;
 }
 
 public record WorldClockEntry(string Label, string TimeZoneId);

@@ -23,6 +23,7 @@ public sealed class AppHost
     public IVolumeService Volume { get; } = new WindowsVolumeService();
 
     public SystemMonitor Monitor { get; }
+    public TimersService Timers { get; }
 
     public AppHost(string settingsPath)
     {
@@ -39,6 +40,7 @@ public sealed class AppHost
             });
             Settings.WorldClocksInitialized = true;
         }
+        Timers = new TimersService(this);
         foreach (var module in WidgetCatalog.Build(this))
         {
             Registry.Register(module.Info);
