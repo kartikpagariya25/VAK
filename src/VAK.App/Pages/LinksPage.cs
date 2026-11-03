@@ -17,7 +17,7 @@ public sealed class LinksPage : UserControl
     private readonly StackPanel _saved = new();
     private readonly TextBlock _count;
     private readonly StackPanel _addForm = new() { Visibility = Visibility.Collapsed, Margin = new Thickness(0, 8, 0, 4) };
-    private readonly TextBox _addUrl, _addTitle;
+    private TextBox _addUrl = null!, _addTitle = null!; // created in the constructor, after the Add button that refers to them
 
     public LinksPage(AppHost host)
     {

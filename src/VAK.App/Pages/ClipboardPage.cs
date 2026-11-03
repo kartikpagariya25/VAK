@@ -17,8 +17,8 @@ public sealed class ClipboardPage : UserControl
     private readonly StackPanel _tabs = new() { Orientation = Orientation.Horizontal };
     private readonly StackPanel _list = new();
     private readonly Grid _detail = new();
-    private readonly TextBox _search;
-    private readonly Border _searchBox;
+    private TextBox _search = null!;      // created in the constructor, after the search button that refers to them
+    private Border _searchBox = null!;
     private ClipKind? _tab;
     private string? _selectedId;
 

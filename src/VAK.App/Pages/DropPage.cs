@@ -136,8 +136,8 @@ public sealed class DropPage : UserControl
         var right = new Grid();
         right.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         right.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-        right.Children.Add(FilesCard("Send to phones", "Drop files here or choose files", server.Shared.Select(s => (s.Name, ShelfStore.FormatSize(s.Size), (Action?)(() => server.RemoveShared(s.Id)))), AddShared));
-        var received = FilesCard("Received", "Nothing received yet", server.Received.Select(r => (r.Name, ShelfStore.FormatSize(r.Size), (Action?)null)), OpenReceivedFolder, "Open folder");
+        right.Children.Add(FilesCard("Send to phones", "Drop files here or choose files", server.Shared.Select<SharedFile, (string Name, string Size, Action? Remove)>(s => (s.Name, ShelfStore.FormatSize(s.Size), () => server.RemoveShared(s.Id))), AddShared));
+        var received = FilesCard("Received", "Nothing received yet", server.Received.Select<ReceivedFile, (string Name, string Size, Action? Remove)>(r => (r.Name, ShelfStore.FormatSize(r.Size), null)), OpenReceivedFolder, "Open folder");
         Grid.SetRow(received, 1);
         right.Children.Add(received);
         Grid.SetColumn(right, 1);
