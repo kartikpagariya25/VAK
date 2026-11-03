@@ -25,6 +25,9 @@ public static class WidgetCatalog
     private static IEnumerable<WidgetModule> BatchTwo(AppHost host) => new[]
     {
         new WidgetModule(
+            new WidgetInfo("aicoding", "AI Coding", "Today", "bot", new[] { "claude", "codex", "tokens", "usage", "cost", "agent" }, false),
+            () => Placeholder("AI Coding"), () => new Pages.AiCodingPage(host), "Claude Code and Codex usage from your local logs"),
+        new WidgetModule(
             new WidgetInfo("fileshelf", "File Shelf", "Parked files", "folder", new[] { "files", "drag", "drop", "park", "shelf", "stash" }, false),
             () => Placeholder("File Shelf"), () => new Pages.FileShelfPage(host), "Park files and drag them back out"),
         new WidgetModule(

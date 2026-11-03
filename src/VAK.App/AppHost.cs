@@ -59,6 +59,7 @@ public sealed class AppHost
     public Core.Clipboard.ClipboardHistory Clipboard { get; }
     public Core.ScreenTime.ScreenTimeLog ScreenTime { get; }
     public Core.Shelf.ShelfStore Shelf { get; }
+    public AiUsageService AiUsage { get; } = new();
     public ScreenTimeTracker? ScreenTimeTracker { get; set; }
 
     /// <summary>Started by the app shell once the UI is up; null until then.</summary>
