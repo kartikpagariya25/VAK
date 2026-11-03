@@ -31,6 +31,10 @@ public static class WeatherCodes
         _ => "Extreme",
     };
 
+    /// <summary>Wind speed as "12 km/h" or, when asked, "7 mph".</summary>
+    public static string FormatWind(double kmh, bool mph)
+        => $"{Math.Round(mph ? kmh / 1.609344 : kmh, MidpointRounding.AwayFromZero).ToString("0", CultureInfo.InvariantCulture)} {(mph ? "mph" : "km/h")}";
+
     /// <summary>Rounds to a whole degree and appends the degree sign; converts to Fahrenheit when asked.</summary>
     public static string FormatTemp(double celsius, bool fahrenheit)
     {

@@ -159,7 +159,7 @@ public sealed class WeatherPage : UserControl, IHeaderExtras
 
         var stats = new UniformGrid { Columns = 3 };
         stats.Children.Add(Stat("water", "Humidity", $"{r.Now.Humidity}%"));
-        stats.Children.Add(Stat("speed", "Wind", $"{Math.Round(r.Now.WindKmh)} km/h"));
+        stats.Children.Add(Stat("speed", "Wind", WeatherCodes.FormatWind(r.Now.WindKmh, _host.Settings.Weather.WindUnit == "mph")));
         stats.Children.Add(Stat("sunny", "UV index", $"{Math.Round(r.Now.Uv)} {WeatherCodes.UvLabel(r.Now.Uv)}"));
         Grid.SetRow(stats, 2);
         grid.Children.Add(new Border { Height = 1, Background = (Brush)FindResource("Brush.Divider"), VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(0, 0, 0, 0) });

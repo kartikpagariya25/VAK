@@ -72,19 +72,10 @@ public partial class ShellContent : UserControl
         var id = _host.Nav.CurrentId;
         string title, subtitle;
         FrameworkElement page;
-        if (id == Navigator.Settings)
-        {
-            (title, subtitle) = ("Settings", "");
-            (title, subtitle) = ("Settings", "Preferences");
-            page = new Pages.SettingsPage(_host);
-        }
-        else
-        {
-            var module = _host.Modules[id];
-            title = module.Info.Title;
-            subtitle = id == Navigator.Home ? ClockFormatter.HeaderDate(DateTimeOffset.Now) : module.Info.Subtitle;
-            page = module.CreatePage();
-        }
+        var module = _host.Modules[id];
+        title = module.Info.Title;
+        subtitle = id == Navigator.Home ? ClockFormatter.HeaderDate(DateTimeOffset.Now) : module.Info.Subtitle;
+        page = module.CreatePage();
         Header.SetPage(title, subtitle);
         Header.SetExtras((page as Widgets.IHeaderExtras)?.CreateHeaderExtras());
         PanelHeightRequested?.Invoke(page is Widgets.ITallPage tall ? tall.PreferredHeight : 388);

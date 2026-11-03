@@ -103,4 +103,11 @@ public class WeatherTests
     [InlineData(-0.2, false, "0°")]
     public void FormatTemp_RoundsAndConverts(double celsius, bool fahrenheit, string expected) =>
         Assert.Equal(expected, WeatherCodes.FormatTemp(celsius, fahrenheit));
+
+    [Theory]
+    [InlineData(10.0, false, "10 km/h")]
+    [InlineData(16.09344, true, "10 mph")]
+    [InlineData(0.0, true, "0 mph")]
+    public void Wind_is_shown_in_the_chosen_unit(double kmh, bool mph, string expected)
+        => Assert.Equal(expected, VAK.Core.Weather.WeatherCodes.FormatWind(kmh, mph));
 }
