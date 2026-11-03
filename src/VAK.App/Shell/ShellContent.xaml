@@ -1,0 +1,16 @@
+<UserControl x:Class="VAK.App.Shell.ShellContent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:shell="clr-namespace:VAK.App.Shell">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="58"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="66"/>
+        </Grid.RowDefinitions>
+        <shell:HeaderView x:Name="Header" Grid.Row="0"/>
+        <ContentControl x:Name="Page" Grid.Row="1" Margin="13,0"/>
+        <shell:AddToDockView x:Name="AddDock" Grid.Row="1" Visibility="Collapsed"/>
+        <shell:DockView x:Name="Dock" Grid.Row="2"/>
+    </Grid>
+</UserControl>

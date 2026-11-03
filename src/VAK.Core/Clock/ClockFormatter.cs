@@ -22,6 +22,9 @@ public static class ClockFormatter
         _ => "dddd, MMMM d, yyyy",
     }, Inv);
 
+    /// <summary>Home-page header subtitle, for example "Tuesday, Nov 3".</summary>
+    public static string HeaderDate(DateTimeOffset now) => now.ToString("dddd, MMM d", Inv);
+
     public static string OffsetLabel(DateTimeOffset now, TimeZoneInfo tz, TimeZoneInfo local)
     {
         var diff = tz.GetUtcOffset(now) - local.GetUtcOffset(now);

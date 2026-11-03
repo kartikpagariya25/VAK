@@ -20,8 +20,9 @@ public partial class ShellWindow : Window
         new PropertyMetadata(CollapsedRadius, (d, e) =>
             ((ShellWindow)d).Island.CornerRadius = new CornerRadius(0, 0, (double)e.NewValue, (double)e.NewValue)));
 
-    private readonly AppSettings _settings;
-    private readonly IBatteryService _battery;
+    private readonly AppHost _host;
+    private AppSettings _settings => _host.Settings;
+    private IBatteryService _battery => _host.Battery;
     private readonly HoverWatcher _hover;
     private readonly DispatcherTimer _clockTimer = new() { Interval = TimeSpan.FromSeconds(1) };
     private readonly DispatcherTimer _fullscreenTimer = new() { Interval = TimeSpan.FromSeconds(1) };
@@ -31,11 +32,14 @@ public partial class ShellWindow : Window
     public double IslandRadius { get => (double)GetValue(IslandRadiusProperty); set => SetValue(IslandRadiusProperty, value); }
     public event Action<bool>? ExpandedChanged;
 
-    public ShellWindow(AppSettings settings, IBatteryService battery)
+    public ShellWindow(AppHost host)
     {
         InitializeComponent();
-        _settings = settings;
-        _battery = battery;
+        _host = host;
+        var content = new ShellContent(host);
+        content.CloseRequested += Collapse;
+        content.PinToggled += pinned => _hover!.KeepOpen = pinned;
+        PageHost.Content = content;
         PositionTopCenter();
 
         SourceInitialized += (_, _) =>

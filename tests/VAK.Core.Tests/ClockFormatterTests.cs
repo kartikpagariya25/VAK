@@ -33,6 +33,10 @@ public class ClockFormatterTests
         Assert.Equal(expected, ClockFormatter.OffsetLabel(Now, TimeZoneInfo.FindSystemTimeZoneById(zoneId), Ist));
 
     [Fact]
+    public void HeaderDate_Is_Tuesday_Nov_3() =>
+        Assert.Equal("Tuesday, Nov 3", ClockFormatter.HeaderDate(TimeZoneInfo.ConvertTime(Now, Ist)));
+
+    [Fact]
     public void TryFind_UnknownId_ReturnsNull() =>
         Assert.Null(ClockFormatter.TryFind("Not A Real Zone"));
 }

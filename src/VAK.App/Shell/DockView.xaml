@@ -1,0 +1,8 @@
+<UserControl x:Class="VAK.App.Shell.DockView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Style="{StaticResource Style.Pill}" Background="{StaticResource Brush.Card}"
+            HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Padding="7,0" CornerRadius="25">
+        <StackPanel x:Name="Buttons" Orientation="Horizontal" VerticalAlignment="Center"/>
+    </Border>
+</UserControl>

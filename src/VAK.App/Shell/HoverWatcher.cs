@@ -19,6 +19,9 @@ public sealed class HoverWatcher : IDisposable
     public TimeSpan CollapseDelay { get; set; } = TimeSpan.FromMilliseconds(250);
     public bool Enabled { get; set; } = true;
 
+    /// <summary>When true the panel never auto-collapses (the header pin button).</summary>
+    public bool KeepOpen { get; set; }
+
     /// <summary>How long a panel opened without the cursor (hotkey, tray) stays open before auto-collapsing.</summary>
     public TimeSpan OpenGrace { get; set; } = TimeSpan.FromSeconds(4);
 
@@ -43,7 +46,7 @@ public sealed class HoverWatcher : IDisposable
             if (trigger.Contains(cursor)) _expand();
             return;
         }
-        if (panel.Contains(cursor)) { _enteredPanel = true; _outsideSince = null; return; }
+        if (KeepOpen || panel.Contains(cursor)) { _enteredPanel = true; _outsideSince = null; return; }
         if (!_enteredPanel && DateTime.UtcNow - _expandedAt < OpenGrace) return;
         _outsideSince ??= DateTime.UtcNow;
         if (DateTime.UtcNow - _outsideSince >= CollapseDelay) { _outsideSince = null; _collapse(); }

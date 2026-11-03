@@ -22,10 +22,10 @@ public partial class App : Application
         if (e.Args.Contains("--gallery")) { new Theme.DesignGalleryWindow().Show(); return; }
 
         var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VAK", "settings.json");
-        var store = new SettingsStore(path);
-        var settings = store.Load();
+        var host = new AppHost(path);
+        var settings = host.Settings;
 
-        _shell = new ShellWindow(settings, new WindowsBatteryService());
+        _shell = new ShellWindow(host);
         var leftArg = Array.IndexOf(e.Args, "--left");
         if (leftArg >= 0 && leftArg + 1 < e.Args.Length && double.TryParse(e.Args[leftArg + 1], out var left))
             _shell.LeftOverride = left;
