@@ -22,7 +22,7 @@ public class SettingsStoreTests : IDisposable
 
     [Fact]
     public void Default_Dock_HoldsEveryWidgetInReferenceOrder() =>
-        Assert.Equal(new[] { "system", "clipboard", "notes", "timers", "fileshelf", "drop", "weather", "clock", "units", "links", "message", "screentime", "aicoding" },
+        Assert.Equal(new[] { "system", "clipboard", "notes", "timers", "fileshelf", "drop", "weather", "clock", "calendar", "units", "converter", "links", "message", "screentime", "aicoding" },
             new AppSettings().Dock);
 
     [Fact]

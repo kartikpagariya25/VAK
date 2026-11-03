@@ -19,6 +19,9 @@ public partial class HeaderView : UserControl
     public HeaderView()
     {
         InitializeComponent();
+        System.Windows.Automation.AutomationProperties.SetName(PinButton, "Pin open or edit");
+        System.Windows.Automation.AutomationProperties.SetName(SettingsButton, "Settings");
+        System.Windows.Automation.AutomationProperties.SetName(CloseButton, "Close");
         PinIcon.Text = Icons.Glyph("pin");
         SettingsIcon.Text = Icons.Glyph("settings");
         CloseIcon.Text = Icons.Glyph("close");

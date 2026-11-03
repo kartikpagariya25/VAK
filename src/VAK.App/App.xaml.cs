@@ -73,6 +73,17 @@ public partial class App : Application
         };
         _dropGuard.Start();
 
+        host.Calendar.Reminder += o =>
+        {
+            var lead = o.Event.ReminderMinutes;
+            var when = lead <= 0 ? "starting now" : lead >= 60 ? "in 1 hour" : $"in {lead} min";
+            var text = $"{o.Event.Title} · {when}";
+            System.Media.SystemSounds.Asterisk.Play();
+            _tray.ShowNotice("Calendar", text);
+            if (Core.Message.BannerSpec.TryCreate(text, Core.Message.BannerAnimation.Slide, 1, o.Event.Color, Core.Message.BannerFinish.Solid, 10, false) is { } banner)
+                host.FlashBanner(banner);
+        };
+
         _hotkey = new HotkeyService(_shell);
         _hotkey.Pressed += () => _shell.Toggle();
         host.TryApplyHotkey = hk => _hotkey.Register(hk);

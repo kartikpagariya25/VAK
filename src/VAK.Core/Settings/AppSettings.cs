@@ -10,7 +10,7 @@ public class AppSettings
     public bool HomeInitialized { get; set; }
     public string SearchEngine { get; set; } = "google";
     public int ScreenTimeLimitMinutes { get; set; } = 420;
-    public List<string> Dock { get; set; } = new() { "system", "clipboard", "notes", "timers", "fileshelf", "drop", "weather", "clock", "units", "links", "message", "screentime", "aicoding" };
+    public List<string> Dock { get; set; } = new() { "system", "clipboard", "notes", "timers", "fileshelf", "drop", "weather", "clock", "calendar", "units", "converter", "links", "message", "screentime", "aicoding" };
     public ClockSettings Clock { get; set; } = new();
     public TimerSettings Timers { get; set; } = new();
     public WeatherSettings Weather { get; set; } = new();

@@ -25,6 +25,9 @@ public static class WidgetCatalog
     private static IEnumerable<WidgetModule> BatchTwo(AppHost host) => new[]
     {
         new WidgetModule(
+            new WidgetInfo("calendar", "Calendar", "Plan your days", "calendar", new[] { "events", "schedule", "reminder", "agenda", "date", "month", "appointment" }, true),
+            () => new Cards.CalendarCard(host), () => new Pages.CalendarPage(host), "Events with repeats and reminders"),
+        new WidgetModule(
             new WidgetInfo("converter", "Converter", "File conversion", "swap", new[] { "convert", "image", "pdf", "mp3", "mp4", "zip", "format", "ffmpeg" }, false),
             () => Placeholder("Converter"), () => new Pages.ConverterPage(host), "Convert images, documents, audio, video and zip"),
         new WidgetModule(

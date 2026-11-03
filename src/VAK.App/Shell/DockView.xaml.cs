@@ -9,7 +9,7 @@ namespace VAK.App.Shell;
 public partial class DockView : UserControl
 {
     /// <summary>Home plus the user's docked widgets, and nothing else, fit in one dock.</summary>
-    public const int Capacity = 14;
+    public const int Capacity = 16;
 
     private readonly Dictionary<string, Button> _buttons = new();
     private Button? _addButton;
@@ -26,14 +26,18 @@ public partial class DockView : UserControl
     {
         Buttons.Children.Clear();
         _buttons.Clear();
-        foreach (var w in widgets)
+        var list = widgets.ToList();
+        var compact = list.Count > 14; // keep 15-16 buttons inside the 800 px panel
+        foreach (var w in list)
         {
             var icon = new TextBlock { Text = Icons.Glyph(w.IconKey), Style = (Style)FindResource("Style.Icon") };
             var button = new Button
             {
                 Style = (Style)FindResource("Style.RoundButton"), Content = icon, ToolTip = w.Title,
-                Margin = new Thickness(0, 0, 9, 0),
+                Margin = new Thickness(0, 0, compact ? 3 : 9, 0),
             };
+            if (compact) { button.Width = 34; button.Height = 34; }
+            System.Windows.Automation.AutomationProperties.SetName(button, w.Title);
             var id = w.Id;
             button.Click += (_, _) => Selected?.Invoke(id);
             _buttons[id] = button;
@@ -41,6 +45,7 @@ public partial class DockView : UserControl
         }
         _addIcon = new TextBlock { Text = Icons.Glyph("add"), Style = (Style)FindResource("Style.Icon") };
         _addButton = new Button { Style = (Style)FindResource("Style.RoundButton"), Content = _addIcon, ToolTip = "Add to dock" };
+        System.Windows.Automation.AutomationProperties.SetName(_addButton, "Add to dock");
         _addButton.Click += (_, _) => AddClicked?.Invoke();
         Buttons.Children.Add(new Border
         {
