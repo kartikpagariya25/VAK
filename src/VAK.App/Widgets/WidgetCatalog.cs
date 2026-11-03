@@ -25,6 +25,9 @@ public static class WidgetCatalog
     private static IEnumerable<WidgetModule> BatchTwo(AppHost host) => new[]
     {
         new WidgetModule(
+            new WidgetInfo("drop", "VAK Drop", "", "share", new[] { "share", "transfer", "phone", "send", "wifi", "qr", "airdrop" }, false),
+            () => Placeholder("Drop"), () => new Pages.DropPage(host), "Send files to and from phones on your network"),
+        new WidgetModule(
             new WidgetInfo("aicoding", "AI Coding", "Today", "bot", new[] { "claude", "codex", "tokens", "usage", "cost", "agent" }, false),
             () => Placeholder("AI Coding"), () => new Pages.AiCodingPage(host), "Claude Code and Codex usage from your local logs"),
         new WidgetModule(

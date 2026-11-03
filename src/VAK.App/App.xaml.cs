@@ -15,6 +15,7 @@ public partial class App : Application
     private TrayService? _tray;
     private ClipboardMonitor? _clipboard;
     private ScreenTimeTracker? _screenTime;
+    private AppHost? _host;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -30,7 +31,7 @@ public partial class App : Application
         if (e.Args.Contains("--gallery")) { new Theme.DesignGalleryWindow().Show(); return; }
 
         var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VAK", "settings.json");
-        var host = new AppHost(path);
+        var host = _host = new AppHost(path);
         var settings = host.Settings;
 
         host.ClipboardMonitor = _clipboard = new ClipboardMonitor(host.Clipboard, host.DataDir);
@@ -77,6 +78,7 @@ public partial class App : Application
         _hotkey?.Dispose();
         _clipboard?.Dispose();
         _screenTime?.Flush();
+        _host?.Drop.StopAsync().Wait(TimeSpan.FromSeconds(2));
         _tray?.Dispose();
         _singleInstance?.Dispose();
         base.OnExit(e);

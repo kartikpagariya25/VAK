@@ -60,6 +60,7 @@ public sealed class AppHost
     public Core.ScreenTime.ScreenTimeLog ScreenTime { get; }
     public Core.Shelf.ShelfStore Shelf { get; }
     public AiUsageService AiUsage { get; } = new();
+    public Core.Drop.DropServer Drop { get; } = new(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "VAK Drop"));
     public ScreenTimeTracker? ScreenTimeTracker { get; set; }
 
     /// <summary>Started by the app shell once the UI is up; null until then.</summary>
