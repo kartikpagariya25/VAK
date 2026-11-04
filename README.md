@@ -17,13 +17,17 @@ A notch for Windows: a black pill at the top-center of your screen that expands 
 - **Links** - web search with engine chips and saved links.
 - **Message** - flash an animated banner on the notch (six animations, colours, duration).
 - **Screen Time** - per-app foreground time, daily limit, 7-day chart.
-- **AI Coding** - today's tokens, messages, tool calls, sessions and an API-price estimate from your local Claude Code and Codex logs.
-- **Settings** - start with Windows, open shortcut, time format.
+- **Calendar** - month view, repeating events, colours, all-day events and reminders that show on the notch.
+- **File Converter** - images, documents to PDF, audio and video (with your own ffmpeg), zip and unzip.
+- **AI Coding** - Claude and GPT from the island: the real claude.ai / chatgpt.com in an embedded browser, or a native chat with your own API key (streaming, saved chats, attachments, markdown).
+- **Now Playing** - what is playing on the PC, with play, pause and skip; beat bars on the closed notch.
+- **Settings** - its own window: General, Notch (style, size, visibility, display, hover or click), Appearance (4 themes, outline, shadow, edge light), Modules, Live Activities, Privacy, License & Updates, About.
+- **Power button** - hides the notch but keeps VAK running; the open shortcut brings it back.
 
 ## Privacy and network
 - Everything is stored locally in `%AppData%\VAK`.
-- The only internet calls are Weather (Open-Meteo) and Units currency rates (frankfurter.app).
-- AI Coding reads `~/.claude/projects` and `~/.codex/sessions` read-only and keeps only counts, never message text.
+- Internet calls: Weather (Open-Meteo), Units currency rates (frankfurter.app), AI chat (the sites in website mode; api.anthropic.com / api.openai.com in API mode, with a key encrypted by Windows DPAPI), and GitHub only when you press Check for updates.
+- Screen time and clipboard history can each be switched off in Settings > Privacy.
 - Drop only starts when you click Start, only on a private network (it refuses networks Windows marks Public), listens on the private LAN address only, and every request needs the random token in the QR code. Received files go to `Downloads\VAK Drop`. Windows may ask to allow VAK through the firewall: choose Private networks.
 
 ## Run
@@ -31,9 +35,9 @@ Requires the .NET 8 SDK.
 ```powershell
 dotnet run --project src/VAK.App
 ```
-The default shortcut is `Ctrl+Alt+Space`. If another app already uses it (the Claude desktop app does), VAK tells you and keeps working; change it under Settings.
+The default shortcut is `Ctrl+Alt+Space` (change it in Settings > General). If another app already uses it (the Claude desktop app does), VAK tells you and keeps working; change it in Settings.
 
-Dev-only: `--gallery` opens the design gallery; `--left <dip>` pins the panel's left edge so VAK can run beside another notch app.
+Dev-only: `--settings [section]` opens the Settings window at start; `--gallery` opens the design gallery; `--left <dip>` pins the panel's left edge so VAK can run beside another notch app.
 
 ## Test
 ```powershell
