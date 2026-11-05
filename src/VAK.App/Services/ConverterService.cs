@@ -74,29 +74,38 @@ public sealed class ConverterService
         Running = true;
         _cts = new CancellationTokenSource();
         var token = _cts.Token;
-        foreach (var item in Items.Where(i => i.State is ItemState.Waiting or ItemState.Failed or ItemState.Cancelled && i.Target is not null).ToList())
+        try
         {
-            if (item.Target is null) continue;
-            if (token.IsCancellationRequested) { item.State = ItemState.Cancelled; item.Message = "Cancelled"; continue; }
-            item.State = ItemState.Running; item.Message = ""; Changed?.Invoke();
-            var target = item.Target;
-            var output = OutputPlanner.Plan(item.Path, target, p => File.Exists(p) || Directory.Exists(p));
-            try
+            foreach (var item in Items.Where(i => i.State is ItemState.Waiting or ItemState.Failed or ItemState.Cancelled && i.Target is not null).ToList())
             {
-                Directory.CreateDirectory(System.IO.Path.GetDirectoryName(output)!);
-                await Task.Run(() => Convert(item, target, output, token), token).ConfigureAwait(true);
-                item.State = ItemState.Done; item.Output = output; if (item.Message.Length == 0) item.Message = "Done";
+                if (item.Target is null) continue;
+                if (token.IsCancellationRequested) { item.State = ItemState.Cancelled; item.Message = "Cancelled"; continue; }
+                item.State = ItemState.Running; item.Message = ""; Changed?.Invoke();
+                var target = item.Target;
+                var output = OutputPlanner.Plan(item.Path, target, p => File.Exists(p) || Directory.Exists(p));
+                try
+                {
+                    Directory.CreateDirectory(System.IO.Path.GetDirectoryName(output)!);
+                    await Task.Run(() => Convert(item, target, output, token), token).ConfigureAwait(true);
+                    item.State = ItemState.Done; item.Output = output; if (item.Message.Length == 0) item.Message = "Done";
+                }
+                catch (OperationCanceledException) { Cleanup(output); item.State = ItemState.Cancelled; item.Message = "Cancelled"; }
+                catch (Exception e)
+                {
+                    Cleanup(output);
+                    item.State = ItemState.Failed; item.Message = Short(e.Message);
+                }
+                Changed?.Invoke();
             }
-            catch (OperationCanceledException) { Cleanup(output); item.State = ItemState.Cancelled; item.Message = "Cancelled"; }
-            catch (Exception e)
-            {
-                Cleanup(output);
-                item.State = ItemState.Failed; item.Message = Short(e.Message);
-            }
+        }
+        finally
+        {
+            // whatever happens above, the queue must never stay stuck on "running" (it would block Add, Remove and the next run)
+            Running = false;
+            _cts.Dispose();
+            _cts = null;
             Changed?.Invoke();
         }
-        Running = false;
-        Changed?.Invoke();
     }
 
     private static string Short(string message)

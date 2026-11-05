@@ -41,7 +41,7 @@ public sealed class AiApiChat : UserControl
         AllowDrop = true;
         Drop += (_, e) => { if (e.Data.GetData(DataFormats.FileDrop) is string[] files) AddFiles(files); };
         Unloaded += (_, _) => _cts?.Cancel();
-        Loaded += (_, _) => { BuildLayout(); RefreshAll(); };
+        Loaded += (_, _) => { if (Content is null) BuildLayout(); RefreshAll(); }; // Loaded can fire again if the page is re-attached; build the layout once
     }
 
     private Brush B(string key) => (Brush)FindResource(key);
