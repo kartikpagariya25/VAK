@@ -19,9 +19,7 @@ public sealed partial class SettingsWindow
         var page = kit.NewPage("General", "Startup, shortcut, time and units");
 
         var start = kit.Toggle(_host.Startup.IsEnabled, v => _host.SetStartWithWindows(v));
-        Action<bool> sync = v => Dispatcher.Invoke(() => start.IsChecked = v);
-        _host.StartWithWindowsChanged += sync;
-        Closed += (_, _) => _host.StartWithWindowsChanged -= sync;
+        _startToggle = start; // kept in step with the tray menu by the window, which subscribes once
         page.Children.Add(kit.Row("Start VAK when Windows starts", "Starts silently each time you sign in. Quit applies only to this session.", start));
 
         _hotkeyText = SettingsKit.Text(s.Hotkey, size: 14, weight: FontWeights.Medium, wrap: false);

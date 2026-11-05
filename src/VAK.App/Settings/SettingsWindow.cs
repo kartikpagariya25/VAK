@@ -28,7 +28,9 @@ public sealed partial class SettingsWindow : Window
     private readonly List<SettingEntry> _index = new();
     private ScrollViewer _scroll = null!;
     private TextBox _search = null!;
-    private readonly StackPanel _results = new();
+    private StackPanel _results = null!;
+    private StackPanel _resultsHost = null!;
+    private CheckBox? _startToggle;
     private string _current = "general";
 
     public SettingsWindow(AppHost host)
@@ -44,7 +46,9 @@ public sealed partial class SettingsWindow : Window
 
         BuildUi();
         _host.ThemeChanged += OnThemeChanged;
-        Closed += (_, _) => _host.ThemeChanged -= OnThemeChanged;
+        Action<bool> syncStartup = v => Dispatcher.Invoke(() => { if (_startToggle is not null) _startToggle.IsChecked = v; });
+        _host.StartWithWindowsChanged += syncStartup;
+        Closed += (_, _) => { _host.ThemeChanged -= OnThemeChanged; _host.StartWithWindowsChanged -= syncStartup; };
         PreviewKeyDown += OnKey;
         Go("general");
     }
@@ -62,6 +66,8 @@ public sealed partial class SettingsWindow : Window
     {
         _scroll = new ScrollViewer { VerticalScrollBarVisibility = ScrollBarVisibility.Hidden, Padding = new Thickness(46, 34, 46, 0) };
         _search = new TextBox();
+        _results = new StackPanel();
+        _resultsHost = new StackPanel { Children = { _results } }; // built once per UI; a panel can only be a child of one parent
         var root = new Grid();
         root.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(290) });
         root.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -222,7 +228,7 @@ public sealed partial class SettingsWindow : Window
             item.MouseLeftButtonUp += (_, _) => { _search.Text = ""; Go(h.Page); Dispatcher.BeginInvoke(() => h.Element.BringIntoView(), System.Windows.Threading.DispatcherPriority.Loaded); };
             _results.Children.Add(item);
         }
-        _scroll.Content = new StackPanel { Children = { _results } };
+        _scroll.Content = _resultsHost;
     }
 
     private void OnKey(object sender, KeyEventArgs e)
