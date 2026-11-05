@@ -44,10 +44,14 @@ public sealed class AppHost
     /// <summary>Raised after the user turned the notch off from its power button (it keeps running; the hotkey brings it back).</summary>
     public event Action? NotchTurnedOff;
 
+    /// <summary>True after the power button was pressed. It lasts until the open shortcut (or a second launch) brings the notch back, and is never saved,
+    /// so starting VAK always shows the notch.</summary>
+    public bool NotchPoweredOff { get; set; }
+
     /// <summary>Hides the notch but keeps VAK running in the background so the open shortcut still works.</summary>
     public void TurnOffNotch()
     {
-        Settings.Notch.ShowNotch = false;
+        NotchPoweredOff = true;
         Apply();
         NotchTurnedOff?.Invoke();
     }

@@ -9,7 +9,10 @@ namespace VAK.App;
 
 public partial class App : Application
 {
+    private const string ShowSignalName = "VAK.ShowSignal";
     private Mutex? _singleInstance;
+    private EventWaitHandle? _showSignal;
+    private volatile bool _exiting;
     private ShellWindow? _shell;
     private HotkeyService? _hotkey;
     private TrayService? _tray;
@@ -27,7 +30,14 @@ public partial class App : Application
             args.Handled = true; // a tray app that runs all day should survive a bad click or tick
         };
         _singleInstance = new Mutex(true, "VAK.SingleInstance", out var first);
-        if (!first) { Shutdown(); return; }
+        if (!first)
+        {
+            // VAK is already running (maybe with the notch turned off): ask it to show itself instead of silently doing nothing.
+            try { EventWaitHandle.OpenExisting(ShowSignalName).Set(); } catch (Exception ex) when (ex is WaitHandleCannotBeOpenedException or UnauthorizedAccessException or IOException) { }
+            Shutdown();
+            return;
+        }
+        _showSignal = new EventWaitHandle(false, EventResetMode.AutoReset, ShowSignalName);
 
         if (e.Args.Contains("--gallery")) { new Theme.DesignGalleryWindow().Show(); return; }
 
@@ -97,6 +107,11 @@ public partial class App : Application
                 host.FlashBanner(banner);
         };
 
+        new Thread(() =>
+        {
+            while (_showSignal!.WaitOne() && !_exiting) Dispatcher.BeginInvoke(() => _shell?.Reveal());
+        }) { IsBackground = true, Name = "VAK show signal" }.Start();
+
         var settingsArg = Array.IndexOf(e.Args, "--settings");
         if (settingsArg >= 0) OpenSettings(settingsArg + 1 < e.Args.Length && !e.Args[settingsArg + 1].StartsWith("--") ? e.Args[settingsArg + 1] : null);
 
@@ -136,6 +151,8 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        _exiting = true;
+        try { _showSignal?.Set(); } catch (ObjectDisposedException) { }
         _hotkey?.Dispose();
         _clipboard?.Dispose();
         _screenTime?.Flush();

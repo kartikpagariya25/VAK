@@ -93,7 +93,7 @@ public partial class ShellWindow : Window
     public void ApplySettings(bool animate)
     {
         var s = _settings;
-        if (!s.Notch.ShowNotch && IsExpanded) Collapse();
+        if ((_host.NotchPoweredOff || !s.Notch.ShowNotch) && IsExpanded) Collapse();
         var themeChanged = ThemeService.Apply(s.Appearance.Theme);
         _shape = NotchGeometry.Collapsed(s.Notch);
         ApplyEffects();
@@ -236,8 +236,17 @@ public partial class ShellWindow : Window
     /// <summary>The open shortcut. If the notch was turned off with its power button, this turns it back on and opens it.</summary>
     public void Toggle()
     {
-        if (!_settings.Notch.ShowNotch) { _settings.Notch.ShowNotch = true; _host.Apply(); Expand(); return; }
+        if (_host.NotchPoweredOff || !_settings.Notch.ShowNotch) { Reveal(); return; }
         if (IsExpanded) Collapse(); else Expand();
+    }
+
+    /// <summary>Brings the notch back if it was turned off, then opens it (the shortcut, the tray, or launching VAK a second time).</summary>
+    public void Reveal()
+    {
+        _host.NotchPoweredOff = false;
+        if (!_settings.Notch.ShowNotch) { _settings.Notch.ShowNotch = true; _host.Save(); }
+        ApplySettings(true);
+        Expand();
     }
 
     private void OnPillClicked()
@@ -423,7 +432,7 @@ public partial class ShellWindow : Window
         // Windows reports "busy" (2) for many things, including screenshot tools; only trust it when a window really covers the display.
         var hide = NativeMethods.SHQueryUserNotificationState(out var state) == 0 && (state is 3 or 4 || state == 2 && ForegroundCoversNotchDisplay());
         _fullscreen = hide;
-        var mode = NotchPolicy.Decide(_settings.Notch, hide, ForegroundMaximizedOnNotchDisplay());
+        var mode = NotchPolicy.Decide(_settings.Notch, hide, ForegroundMaximizedOnNotchDisplay(), _host.NotchPoweredOff);
         if (IsExpanded || _showingBanner) mode = NotchMode.Full;
         var changed = mode != _mode;
         _mode = mode;

@@ -5,9 +5,10 @@ public enum NotchMode { Full, Minimal, Hidden }
 /// <summary>How much of the notch to show right now.</summary>
 public static class NotchPolicy
 {
-    public static NotchMode Decide(NotchSettings n, bool fullscreenApp, bool maximizedApp)
+    /// <param name="poweredOff">The notch was turned off with its power button. That lasts for this run only; the saved settings are untouched.</param>
+    public static NotchMode Decide(NotchSettings n, bool fullscreenApp, bool maximizedApp, bool poweredOff = false)
     {
-        if (!n.ShowNotch || n.Visibility == "hidden") return NotchMode.Hidden;
+        if (poweredOff || !n.ShowNotch || n.Visibility == "hidden") return NotchMode.Hidden;
         if (fullscreenApp && n.HideInFullscreen) return NotchMode.Hidden;
         return n.Visibility switch
         {

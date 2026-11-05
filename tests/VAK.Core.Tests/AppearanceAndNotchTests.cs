@@ -82,6 +82,15 @@ public class AppearanceAndNotchTests
     }
 
     [Fact]
+    public void Power_off_hides_the_notch_for_this_session_without_touching_the_saved_setting()
+    {
+        var n = new NotchSettings { ShowNotch = true, Visibility = "always" };
+        Assert.Equal(NotchMode.Hidden, NotchPolicy.Decide(n, false, false, poweredOff: true));
+        Assert.Equal(NotchMode.Full, NotchPolicy.Decide(n, false, false, poweredOff: false));
+        Assert.True(n.ShowNotch);
+    }
+
+    [Fact]
     public void Size_scale_is_clamped_and_geometry_follows_style()
     {
         Assert.Equal(1.0, NotchGeometry.Scale(new NotchSettings { SizePercent = 100 }));
