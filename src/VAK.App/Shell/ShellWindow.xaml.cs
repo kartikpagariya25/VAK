@@ -374,6 +374,8 @@ public partial class ShellWindow : Window
         // The notch itself plus a small margin, not a wide strip: reaching for a title bar or tab near the top must not pop the panel.
         var w = Math.Max(CollapsedWidth, 60);
         var trigger = new Rect(centerX - (w / 2 + 8) * s, origin.Y - 5, (w + 16) * s, (CollapsedGap + CollapsedHeight + 8) * s);
+        // Opening on a click must hit the notch itself: the spare margin would otherwise open it when you click a window's title bar or a browser tab beside it.
+        if (_hover is { OpenOnClick: true }) trigger = new Rect(centerX - w / 2 * s, origin.Y + CollapsedGap * s, w * s, CollapsedHeight * s);
         var panel = new Rect(centerX - (ExpandedWidth / 2 + 6) * s, origin.Y, (ExpandedWidth + 12) * s, (_expandedHeight + 6) * s);
         return (trigger, panel);
     }

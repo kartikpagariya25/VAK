@@ -54,12 +54,14 @@ public sealed class HoverWatcher : IDisposable
         if (!_isExpanded())
         {
             _outsideSince = null;
+            // Track the button on every poll, so a press that started elsewhere (dragging a window or a tab in) never counts as a click on the notch.
+            var down = (NativeMethods.GetAsyncKeyState(0x01) & 0x8000) != 0;
+            var pressed = down && !_wasDown;
+            _wasDown = down;
             if (!trigger.Contains(cursor)) { _insideTriggerSince = null; return; }
             if (OpenOnClick)
             {
-                var down = (NativeMethods.GetAsyncKeyState(0x01) & 0x8000) != 0;
-                if (down && !_wasDown) _expand();
-                _wasDown = down;
+                if (pressed) _expand();
                 return;
             }
             _insideTriggerSince ??= DateTime.UtcNow;
