@@ -22,7 +22,7 @@ A notch for Windows: a black pill at the top-center of your screen that expands 
 - **AI Coding** - Claude and GPT from the island: the real claude.ai / chatgpt.com in an embedded browser, or a native chat with your own API key (streaming, saved chats, attachments, markdown).
 - **Now Playing** - what is playing on the PC, with play, pause and skip; beat bars on the closed notch.
 - **Settings** - its own window: General, Notch (style, size, visibility, display, hover or click), Appearance (4 themes, outline, shadow, edge light), Modules, Live Activities, Privacy, License & Updates, About.
-- **Power button** - hides the notch but keeps VAK running; the open shortcut brings it back.
+- **Power button** - hides the notch for this session but keeps VAK running; the open shortcut, the tray icon, or launching VAK again brings it back. Starting VAK always shows the notch (the saved "Show notch" switch in Settings is separate).
 
 ## Privacy and network
 - Everything is stored locally in `%AppData%\VAK`.
